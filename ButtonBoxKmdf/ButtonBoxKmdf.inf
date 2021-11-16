@@ -1,0 +1,92 @@
+;
+; ButtonBoxKmdf.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=HIDClass ; TODO: specify appropriate Class
+ClassGuid={745a17a0-74d3-11d0-b6fe-00a0c90f57da}
+Provider=%ManufacturerName%
+CatalogFile=ButtonBoxKmdf.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+;PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+;ButtonBoxKmdf_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+ButtonBoxKmdf.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ButtonBoxKmdf.DeviceDesc%=ButtonBoxKmdf_Device, root\ButtonBoxKmdf ; TODO: edit hw-id
+
+[ButtonBoxKmdf_Device.NT]
+CopyFiles=Drivers_Dir
+
+[ButtonBoxKmdf_Device.NT.HW]
+AddReg=ButtonBoxKmdf_AddReg_Flt
+
+[Drivers_Dir]
+ButtonBoxKmdf.sys
+
+;-------------- Service installation
+
+[ButtonBoxKmdf_Device.NT.Services]
+AddService=ButtonBoxKmdf,0, ButtonBoxKmdf_Service_Inst
+AddService=mshidkmdf,0x00000002,mshidkmdf_Service_Inst
+
+[ButtonBoxKmdf_AddReg_Flt]
+HKR,,"LowerFilters",0x00010008,"ButtonBoxKmdf"
+
+[mshidkmdf_Service_Inst]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\mshidkmdf.sys
+
+; -------------- ButtonBoxKmdf driver install sections
+[ButtonBoxKmdf_Service_Inst]
+DisplayName    = %ButtonBoxKmdf.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\ButtonBoxKmdf.sys
+
+;
+;--- ButtonBoxKmdf_Device Coinstaller installation ------
+;
+
+[ButtonBoxKmdf_Device.NT.CoInstallers]
+;AddReg=ButtonBoxKmdf_Device_CoInstaller_AddReg
+;CopyFiles=ButtonBoxKmdf_Device_CoInstaller_CopyFiles
+
+;[ButtonBoxKmdf_Device_CoInstaller_AddReg]
+;HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+;[ButtonBoxKmdf_Device_CoInstaller_CopyFiles]
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[ButtonBoxKmdf_Device.NT.Wdf]
+KmdfService =  ButtonBoxKmdf, ButtonBoxKmdf_wdfsect
+
+[ButtonBoxKmdf_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "ButtonBoxKmdf Installation Disk"
+ButtonBoxKmdf.DeviceDesc = "ButtonBoxKmdf Device"
+ButtonBoxKmdf.SVCDESC = "ButtonBoxKmdf Service"

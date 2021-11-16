@@ -1,0 +1,2 @@
+cd /d "C:\Users\iceri\source\repos\ButtonBox\ButtonBoxKmdf" &msbuild "ButtonBoxKmdf.vcxproj" /t:sdvViewer /p:configuration="Release" /p:platform="x64" /p:SolutionDir="C:\Users\iceri\source\repos\ButtonBox" 
+exit %errorlevel% 

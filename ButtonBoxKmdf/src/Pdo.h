@@ -1,0 +1,29 @@
+#ifndef _PDO_H_
+#define _PDO_H_
+
+
+
+EXTERN_C_START
+
+NTSTATUS CreateInitChildPdo(WDFDEVICE parentFdo);
+
+
+// DEVICE_CONTEXT structure for child PDO
+typedef struct _PDO_DEVICE_CONTEXT
+{
+	WDFDEVICE pdo;
+	WDFDEVICE parentFdo;
+
+	HID_DEVICE_ATTRIBUTES deviceAttributes; // HID_DEVICE_ATTRIBUTES
+	HID_DESCRIPTOR hidDescriptor; // HID_DESCRIPTOR
+	PCHAR reportDescriptor; // REPORT_DESCRIPTOR
+	UCHAR hidInputReport[HID_INPUT_REPORT_LEN]; // HID input report
+
+}PDO_DEVICE_CONTEXT, *PPDO_DEVICE_CONTEXT;
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(PDO_DEVICE_CONTEXT, PdoGetData);
+
+EVT_WDF_IO_QUEUE_IO_INTERNAL_DEVICE_CONTROL ButtonBoxHidInternalDeviceControl;
+
+EXTERN_C_END
+
+#endif // _PDO_H_
