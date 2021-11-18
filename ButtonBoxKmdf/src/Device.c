@@ -15,18 +15,11 @@ Environment:
 --*/
 
 #include "driver.h"
-//#include "device.tmh"
-//#include "Trace.h"
 
 #include "hid.h"
 #include "utils.h"
 #include "Serial.h"
 #include "Descriptor.h"
-
-//#ifdef ALLOC_PRAGMA
-//#pragma alloc_text (PAGE, ButtonBoxEvtDeviceAdd)
-//#pragma alloc_text (PAGE, ButtonBoxCreateDevice)
-//#endif
 
 HID_DESCRIPTOR hidDescriptor[] = {
 
@@ -74,11 +67,8 @@ ButtonBoxEvtDeviceAdd(
 	//PAGED_CODE();
 
 	KdBreakPoint();
-	//TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
 	status = ButtonBoxCreateDevice(DeviceInit);
-
-	//TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
 
 	return status;
 }
@@ -115,8 +105,6 @@ ButtonBoxCreateDevice(
 	WDF_TIMER_CONFIG timerConfig;
 	WDF_OBJECT_ATTRIBUTES timerAttributes;
 	UCHAR minorFunction = IRP_MN_QUERY_ID;
-
-	//PAGED_CODE();
 
 	KdPrint(("ButtonBoxCreateDevice called!\n"));
 
@@ -355,6 +343,9 @@ NTSTATUS ButtonBoxEvtDevicePrepareHardware(
 		}
 
 		WDF_IO_TARGET_OPEN_PARAMS_INIT_OPEN_BY_NAME(&targetParams, &deviceName, GENERIC_READ | GENERIC_WRITE);
+		targetParams.ShareAccess = 0;
+		targetParams.CreateDisposition = FILE_OPEN;
+		targetParams.FileAttributes = FILE_ATTRIBUTE_NORMAL;
 
 		status = WdfIoTargetOpen(ioTarget, &targetParams);
 		if (!NT_SUCCESS(status)) {
@@ -468,7 +459,7 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 			&oa,
 			NonPagedPool,
 			'BoBu',
-			1,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
+			16,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
 			&devCtx->requestMemory,
 			NULL);
 		if (!NT_SUCCESS(status)) {

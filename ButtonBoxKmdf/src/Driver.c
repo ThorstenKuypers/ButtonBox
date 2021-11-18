@@ -15,13 +15,6 @@ Environment:
 --*/
 
 #include "driver.h"
-//#include "driver.tmh"
-
-//#ifdef ALLOC_PRAGMA
-//#pragma alloc_text (INIT, DriverEntry)
-//#pragma alloc_text (PAGE, ButtonBoxEvtDriverContextCleanup)
-//#endif
-
 
 NTSTATUS
 DriverEntry(
@@ -58,13 +51,6 @@ Return Value:
     NTSTATUS status;
     WDF_OBJECT_ATTRIBUTES attributes;
 
-    //
-    // Initialize WPP Tracing
-    //
-    //WPP_INIT_TRACING( DriverObject, RegistryPath );
-	
-    //TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
-
 	KdPrint(("ButtonBox DriverEntry called!\n"));
 	KdBreakPoint();
 
@@ -87,12 +73,9 @@ Return Value:
                              );
 
     if (!NT_SUCCESS(status)) {
-        //TraceEvents(TRACE_LEVEL_ERROR, TRACE_DRIVER, "WdfDriverCreate failed %!STATUS!", status);
-        //WPP_CLEANUP(DriverObject);
+        KdPrint(("NT_STATUS error: 0x%08X", status));
         return status;
     }
-
-    //TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
 
     return status;
 }
@@ -119,13 +102,5 @@ Return Value:
 {
     UNREFERENCED_PARAMETER(DriverObject);
 
-    //PAGED_CODE ();
-
-    //TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
-
-    //
-    // Stop WPP Tracing
-    //
-    //WPP_CLEANUP( WdfDriverWdmGetDriverObject( (WDFDRIVER) DriverObject) );
-
+    KdBreakPoint();
 }

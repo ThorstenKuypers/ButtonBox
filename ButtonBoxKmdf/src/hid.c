@@ -13,31 +13,31 @@ ButtonBoxHidInternalDeviceControl(
 	_In_ size_t OutputBufferLength,
 	_In_ size_t InputBufferLength,
 	_In_ ULONG IoControlCode
-	)
-	/*++
+)
+/*++
 
-	Routine Description:
+Routine Description:
 
-	This event is invoked when the framework receives IRP_MJ_DEVICE_CONTROL request.
+This event is invoked when the framework receives IRP_MJ_DEVICE_CONTROL request.
 
-	Arguments:
+Arguments:
 
-	Queue -  Handle to the framework queue object that is associated with the
-	I/O request.
+Queue -  Handle to the framework queue object that is associated with the
+I/O request.
 
-	Request - Handle to a framework request object.
+Request - Handle to a framework request object.
 
-	OutputBufferLength - Size of the output buffer in bytes
+OutputBufferLength - Size of the output buffer in bytes
 
-	InputBufferLength - Size of the input buffer in bytes
+InputBufferLength - Size of the input buffer in bytes
 
-	IoControlCode - I/O control code.
+IoControlCode - I/O control code.
 
-	Return Value:
+Return Value:
 
-	VOID
+VOID
 
-	--*/
+--*/
 {
 	NTSTATUS status = STATUS_SUCCESS;
 	PDEVICE_CONTEXT devCtx;
@@ -53,7 +53,8 @@ ButtonBoxHidInternalDeviceControl(
 	UNREFERENCED_PARAMETER(InputBufferLength);
 
 	devCtx = DeviceGetContext(device);
-	if (devCtx == NULL) {
+	if (devCtx == NULL)
+	{
 
 		KdBreakPoint();
 		status = STATUS_INVALID_PARAMETER;
@@ -66,142 +67,147 @@ ButtonBoxHidInternalDeviceControl(
 
 	switch (IoControlCode)
 	{
-	case IOCTL_HID_GET_DEVICE_DESCRIPTOR:
-		DbgPrint("IOCTL_HID_GET_DEVICE_DESCRIPTOR called!");
+		case IOCTL_HID_GET_DEVICE_DESCRIPTOR:
+			DbgPrint("IOCTL_HID_GET_DEVICE_DESCRIPTOR called!");
 
-		// HID class driver asks for HID descriptor
-		status = WdfRequestRetrieveOutputBuffer(Request, OutputBufferLength, (PVOID)&buf, &len);
-		if (!NT_SUCCESS(status)) {
+			// HID class driver asks for HID descriptor
+			status = WdfRequestRetrieveOutputBuffer(Request, OutputBufferLength, (PVOID)&buf, &len);
+			if (!NT_SUCCESS(status))
+			{
 
-			//TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "!FUNC! WdfRequestRetrieveOutputMemory failed! %!STATUS!", status);
-			WdfRequestComplete(Request, status);
+				//TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "!FUNC! WdfRequestRetrieveOutputMemory failed! %!STATUS!", status);
+				WdfRequestComplete(Request, status);
 
-			return;
-		}
-
-		if (len < OutputBufferLength) {
-
-			status = STATUS_BUFFER_TOO_SMALL;
-			WdfRequestComplete(Request, status);
-
-			return;
-		}
-
-		RtlCopyMemory(buf, &devCtx->hidDescriptor, devCtx->hidDescriptor.bLength);
-
-		WdfRequestCompleteWithInformation(Request, status, devCtx->hidDescriptor.bLength);
-
-		return;
-
-	case IOCTL_HID_GET_DEVICE_ATTRIBUTES:
-		DbgPrint("IOCTL_HID_GET_DEVICE_ATTRIBUTES called!");
-
-		if (devCtx != NULL) {
-
-			status = CopyToOutputBuffer(Request, &devCtx->deviceAttributes, sizeof(HID_DEVICE_ATTRIBUTES));
-			if (!NT_SUCCESS(status)) {
-
-				break;
+				return;
 			}
-		}
 
-		WdfRequestCompleteWithInformation(Request, status, sizeof(HID_DEVICE_ATTRIBUTES));
+			if (len < OutputBufferLength)
+			{
 
-		return;
+				status = STATUS_BUFFER_TOO_SMALL;
+				WdfRequestComplete(Request, status);
 
-	case IOCTL_HID_GET_REPORT_DESCRIPTOR:
-		DbgPrint("IOCTL_HID_GET_REPORT_DESCRIPTOR called!");
+				return;
+			}
 
-		status = CopyToOutputBuffer(Request, devCtx->reportDescriptor, OutputBufferLength);
+			RtlCopyMemory(buf, &devCtx->hidDescriptor, devCtx->hidDescriptor.bLength);
 
-		WdfRequestCompleteWithInformation(Request, status, OutputBufferLength);
+			WdfRequestCompleteWithInformation(Request, status, devCtx->hidDescriptor.bLength);
 
-		return;
-
-	case IOCTL_HID_READ_REPORT:
-		DbgPrint("IOCTL_HID_READ_REPORT called!");
-
-		status = WdfRequestForwardToIoQueue(Request, devCtx->readReqQueue);
-		if (!NT_SUCCESS(status)) {
-
-			KdBreakPoint();
 			return;
-		}
 
-		return;
+		case IOCTL_HID_GET_DEVICE_ATTRIBUTES:
+			DbgPrint("IOCTL_HID_GET_DEVICE_ATTRIBUTES called!");
+
+			if (devCtx != NULL)
+			{
+
+				status = CopyToOutputBuffer(Request, &devCtx->deviceAttributes, sizeof(HID_DEVICE_ATTRIBUTES));
+				if (!NT_SUCCESS(status))
+				{
+
+					break;
+				}
+			}
+
+			WdfRequestCompleteWithInformation(Request, status, sizeof(HID_DEVICE_ATTRIBUTES));
+
+			return;
+
+		case IOCTL_HID_GET_REPORT_DESCRIPTOR:
+			DbgPrint("IOCTL_HID_GET_REPORT_DESCRIPTOR called!");
+
+			status = CopyToOutputBuffer(Request, devCtx->reportDescriptor, OutputBufferLength);
+
+			WdfRequestCompleteWithInformation(Request, status, OutputBufferLength);
+
+			return;
+
+		case IOCTL_HID_READ_REPORT:
+			DbgPrint("IOCTL_HID_READ_REPORT called!");
+
+			status = WdfRequestForwardToIoQueue(Request, devCtx->readReqQueue);
+			if (!NT_SUCCESS(status))
+			{
+
+				KdBreakPoint();
+				return;
+			}
+
+			return;
 
 
 
-	case IOCTL_GET_PHYSICAL_DESCRIPTOR:
-		DbgPrint("IOCTL_GET_PHYSICAL_DESCRIPTOR called!");
-		KdBreakPoint();
+		case IOCTL_GET_PHYSICAL_DESCRIPTOR:
+			DbgPrint("IOCTL_GET_PHYSICAL_DESCRIPTOR called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_ACTIVATE_DEVICE:
-		DbgPrint("IOCTL_HID_ACTIVATE_DEVICE called!");
-		KdBreakPoint();
+		case IOCTL_HID_ACTIVATE_DEVICE:
+			DbgPrint("IOCTL_HID_ACTIVATE_DEVICE called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_DEACTIVATE_DEVICE:
-		DbgPrint("IOCTL_HID_DEACTIVATE_DEVICE called!");
-		KdBreakPoint();
+		case IOCTL_HID_DEACTIVATE_DEVICE:
+			DbgPrint("IOCTL_HID_DEACTIVATE_DEVICE called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_GET_FEATURE:
-		DbgPrint("IOCTL_HID_GET_FEATURE called!");
-		KdBreakPoint();
+		case IOCTL_HID_GET_FEATURE:
+			DbgPrint("IOCTL_HID_GET_FEATURE called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_GET_INDEXED_STRING:
-		DbgPrint("IOCTL_HID_GET_INDEXED_STRING called!");
-		KdBreakPoint();
+		case IOCTL_HID_GET_INDEXED_STRING:
+			DbgPrint("IOCTL_HID_GET_INDEXED_STRING called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_GET_INPUT_REPORT:
-		DbgPrint("IOCTL_HID_GET_INPUT_REPORT called!");
-		KdBreakPoint();
+		case IOCTL_HID_GET_INPUT_REPORT:
+			DbgPrint("IOCTL_HID_GET_INPUT_REPORT called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_GET_STRING:
-		DbgPrint("IOCTL_HID_GET_STRING called!");
-		KdBreakPoint();
+		case IOCTL_HID_GET_STRING:
+			DbgPrint("IOCTL_HID_GET_STRING called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_SEND_IDLE_NOTIFICATION_REQUEST:
-		DbgPrint("IOCTL_HID_SEND_IDLE_NOTIFICATION_REQUEST called!");
-		KdBreakPoint();
+		case IOCTL_HID_SEND_IDLE_NOTIFICATION_REQUEST:
+			DbgPrint("IOCTL_HID_SEND_IDLE_NOTIFICATION_REQUEST called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_SET_FEATURE:
-		DbgPrint("IOCTL_HID_SET_FEATURE called!");
-		KdBreakPoint();
+		case IOCTL_HID_SET_FEATURE:
+			DbgPrint("IOCTL_HID_SET_FEATURE called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_SET_OUTPUT_REPORT:
-		DbgPrint("IOCTL_HID_SET_OUTPUT_REPORT called!");
-		KdBreakPoint();
+		case IOCTL_HID_SET_OUTPUT_REPORT:
+			DbgPrint("IOCTL_HID_SET_OUTPUT_REPORT called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	case IOCTL_HID_WRITE_REPORT:
-		DbgPrint("IOCTL_HID_WRITE_REPORT called!");
-		KdBreakPoint();
+		case IOCTL_HID_WRITE_REPORT:
+			DbgPrint("IOCTL_HID_WRITE_REPORT called!");
+			KdBreakPoint();
 
-		break;
+			break;
 
-	default:
-		KdBreakPoint();
+		default:
+			KdBreakPoint();
 
-		break;
+			break;
 	}
 	WdfRequestComplete(Request, status);
 
@@ -215,7 +221,7 @@ ButtonBoxHidInternalDeviceControl(
 */
 VOID ButtonBoxEvtReadInput(
 	_In_ WDFTIMER Timer
-	)
+)
 {
 	WDFDEVICE dev;
 	PDEVICE_CONTEXT devCtx;
@@ -226,30 +232,57 @@ VOID ButtonBoxEvtReadInput(
 	int avail = 0; // bytes available to be read from serial port
 	int ret = 0;
 	ULONG len = 0;
+	ULONG_PTR read;
 
 	dev = WdfTimerGetParentObject(Timer);
-	if (dev != NULL) {
+	if (dev != NULL)
+	{
 
 		devCtx = DeviceGetContext(dev);
-		if (devCtx != NULL) {
+		if (devCtx != NULL)
+		{
 
 			// receive data from the physical button box via 
 			// the I/O target to serial port
 			// ...
+			if (devCtx->serialReadRequest != NULL)
+			{
+				//WDF_REQUEST_REUSE_PARAMS reqParams;
+				//WDF_REQUEST_REUSE_PARAMS_INIT(&reqParams, WDF_REQUEST_REUSE_NO_FLAGS, STATUS_SUCCESS);
+				//WdfRequestReuse(devCtx->serialReadRequest, &reqParams);
+
+				//WDF_DEVICE_POWER_STATE ps = WdfDeviceGetDevicePowerState(WdfIoTargetGetDevice(devCtx->serialIoTarget));
+				//WdfRequestSetCompletionRoutine(devCtx->serialReadRequest, SerialReadComplete, devCtx);
+				//BOOLEAN b = WdfRequestSend(devCtx->serialReadRequest, devCtx->serialIoTarget, NULL);
+				
+				//WDF_MEMORY_DESCRIPTOR memBuf;
+				//WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&memBuf, devCtx->rxRingBufMem, NULL);
+				//WDF_REQUEST_SEND_OPTIONS opt;
+				//WDF_REQUEST_SEND_OPTIONS_INIT(&opt, )
+
+				//status = WdfIoTargetSendReadSynchronously(devCtx->serialIoTarget, devCtx->serialReadRequest, &memBuf, NULL, NULL, &read);
+				//if (!NT_SUCCESS(status))
+				//{
+				//	KdBreakPoint();
+				//}
+			}
 
 			// check that at least a header byte is available
 			avail = SerialCheckBytesAvailable(devCtx);
-			if (avail < 0) {
+			if (avail < 0)
+			{
 
-				KdBreakPoint();				
+				KdBreakPoint();
 				return;
 			}
 
-			if (avail >= 1) {
+			if (avail >= 1)
+			{
 
 				// read in header byte
 				ret = SerialRead(devCtx, (PUCHAR)&hdr, sizeof(UCHAR));
-				if (ret < 0) {
+				if (ret < 0)
+				{
 
 					KdBreakPoint();
 					return;
@@ -257,45 +290,54 @@ VOID ButtonBoxEvtReadInput(
 
 				len = HDR_LEN(hdr);
 				// check if continuation of fragmented packet
-				if (CHECK_FRAG(hdr)) {
+				if (CHECK_FRAG(hdr))
+				{
 
 					// concat to previous data
 				}
-				else if (CHECK_RECV(hdr)) { // ButtonBox input report
+				else if (CHECK_RECV(hdr))
+				{ // ButtonBox input report
 
-					if (len > 0) {
+					if (len > 0)
+					{
 
 						// check that at least hdr.len bytes are availbale to read 
 						avail = SerialCheckBytesAvailable(devCtx);
-						if (avail >= (int)len) {
+						if (avail >= (int)len)
+						{
 
-							status = WdfIoQueueRetrieveNextRequest(devCtx->readReqQueue, &Request);
-							if (!NT_SUCCESS(status)) {
 
-								// likely that no request is available in the Queue! (Queue == empty)
-								ASSERT(NT_SUCCESS(status));
-								return;
-							}
-
-							if (len < HID_INPUT_REPORT_LEN) {
+							if (len < HID_INPUT_REPORT_LEN)
+							{
 
 								ret = SerialRead(devCtx, hidReport, len);
 							}
 							else
 								ret = SerialRead(devCtx, hidReport, HID_INPUT_REPORT_LEN);
 
-							status = CopyToOutputBuffer(Request, hidReport, HID_INPUT_REPORT_LEN);
-							WdfRequestCompleteWithInformation(Request, status, HID_INPUT_REPORT_LEN);
 
 							return;
 						}
-						else {
-							ASSERT(avail >= (int)len);
+						else
+						{
+							//ASSERT(avail >= (int)len);
 							return;
 						}
 					}
 				}
 			}
+
+			status = WdfIoQueueRetrieveNextRequest(devCtx->readReqQueue, &Request);
+			if (!NT_SUCCESS(status))
+			{
+
+				// likely that no request is available in the Queue! (Queue == empty)
+				ASSERT(NT_SUCCESS(status));
+				return;
+			}
+			status = CopyToOutputBuffer(Request, hidReport, HID_INPUT_REPORT_LEN);
+			WdfRequestCompleteWithInformation(Request, status, HID_INPUT_REPORT_LEN);
 		}
 	}
+
 }

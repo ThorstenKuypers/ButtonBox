@@ -184,11 +184,13 @@ void SerialReadComplete(
 		}
 
 		// check that the device is still in the powered state
-		if (WdfDeviceGetDevicePowerState(WdfIoTargetGetDevice(Target)) != WdfDevStatePowerD0) {
+		WDF_POWER_DEVICE_STATE ps = WdfDeviceGetDevicePowerState(WdfIoTargetGetDevice(Target));
+		if (ps != WdfDevStatePowerD0NP) {
 			KdBreakPoint();
 			return; // if device is no longer in D0 state skip and do not resend the request
 		}
-		// re-init the request to be reused
+
+		 //re-init the request to be reused
 		WDF_REQUEST_REUSE_PARAMS_INIT(&reqParams, WDF_REQUEST_REUSE_NO_FLAGS, status);
 		status = WdfRequestReuse(Request, &reqParams);
 		if (!NT_SUCCESS(status)) {
@@ -199,7 +201,7 @@ void SerialReadComplete(
 			// ...
 		}
 
-		WdfRequestSetCompletionRoutine(devCtx->serialReadRequest, SerialReadComplete, devCtx);
+		WdfRequestSetCompletionRoutine(Request, SerialReadComplete, devCtx);
 
 		// re-format the request as read request
 		status = WdfIoTargetFormatRequestForRead(devCtx->serialIoTarget,
