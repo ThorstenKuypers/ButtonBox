@@ -459,7 +459,7 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 			&oa,
 			NonPagedPool,
 			'BoBu',
-			16,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
+			14,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
 			&devCtx->requestMemory,
 			NULL);
 		if (!NT_SUCCESS(status)) {
