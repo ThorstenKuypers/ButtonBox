@@ -39,25 +39,25 @@ NTSTATUS
 ButtonBoxEvtDeviceAdd(
 	_In_    WDFDRIVER       Driver,
 	_Inout_ PWDFDEVICE_INIT DeviceInit
-	)
-	/*++
-	Routine Description:
+)
+/*++
+Routine Description:
 
-	EvtDeviceAdd is called by the framework in response to AddDevice
-	call from the PnP manager. We create and initialize a device object to
-	represent a new instance of the device.
+EvtDeviceAdd is called by the framework in response to AddDevice
+call from the PnP manager. We create and initialize a device object to
+represent a new instance of the device.
 
-	Arguments:
+Arguments:
 
-	Driver - Handle to a framework driver object created in DriverEntry
+Driver - Handle to a framework driver object created in DriverEntry
 
-	DeviceInit - Pointer to a framework-allocated WDFDEVICE_INIT structure.
+DeviceInit - Pointer to a framework-allocated WDFDEVICE_INIT structure.
 
-	Return Value:
+Return Value:
 
-	NTSTATUS
+NTSTATUS
 
-	--*/
+--*/
 {
 	NTSTATUS status = STATUS_SUCCESS;
 
@@ -76,24 +76,24 @@ ButtonBoxEvtDeviceAdd(
 NTSTATUS
 ButtonBoxCreateDevice(
 	_Inout_ PWDFDEVICE_INIT DeviceInit
-	)
-	/*++
+)
+/*++
 
-	Routine Description:
+Routine Description:
 
-		Worker routine called to create a device and its software resources.
+	Worker routine called to create a device and its software resources.
 
-	Arguments:
+Arguments:
 
-		DeviceInit - Pointer to an opaque init structure. Memory for this
-						structure will be freed by the framework when the WdfDeviceCreate
-						succeeds. So don't access the structure after that point.
+	DeviceInit - Pointer to an opaque init structure. Memory for this
+					structure will be freed by the framework when the WdfDeviceCreate
+					succeeds. So don't access the structure after that point.
 
-	Return Value:
+Return Value:
 
-		NTSTATUS
+	NTSTATUS
 
-	--*/
+--*/
 {
 	WDF_OBJECT_ATTRIBUTES   deviceAttributes;
 	PDEVICE_CONTEXT devCtx;
@@ -123,7 +123,8 @@ ButtonBoxCreateDevice(
 	// handle this request by itself, but the root enumerator assigns a NULL ID
 	// for DeviceID and HardwareID which causes a crash in the PnP manager!
 	status = WdfDeviceInitAssignWdmIrpPreprocessCallback(DeviceInit, ButtonBoxEvtHandleQueryIrp, IRP_MJ_PNP, &minorFunction, 1);
-	if (!NT_SUCCESS(status)) {
+	if (!NT_SUCCESS(status))
+	{
 
 		KdBreakPoint();
 		return status;
@@ -134,7 +135,8 @@ ButtonBoxCreateDevice(
 
 	status = WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device);
 
-	if (NT_SUCCESS(status)) {
+	if (NT_SUCCESS(status))
+	{
 		//
 		// Get a pointer to the device context structure that we just associated
 		// with the device object. We define this structure in the device.h
@@ -166,7 +168,7 @@ ButtonBoxCreateDevice(
 		WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(
 			&queueConfig,
 			WdfIoQueueDispatchParallel
-			);
+		);
 
 		queueConfig.PowerManaged = WdfUseDefault;
 		queueConfig.EvtIoInternalDeviceControl = ButtonBoxHidInternalDeviceControl;
@@ -176,9 +178,10 @@ ButtonBoxCreateDevice(
 			&queueConfig,
 			WDF_NO_OBJECT_ATTRIBUTES,
 			&queue
-			);
+		);
 
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 			//TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "WdfIoQueueCreate failed %!STATUS!", status);
 			return status;
 		}
@@ -188,7 +191,8 @@ ButtonBoxCreateDevice(
 		queueConfig.PowerManaged = WdfFalse;
 
 		status = WdfIoQueueCreate(device, &queueConfig, WDF_NO_OBJECT_ATTRIBUTES, &devCtx->readReqQueue);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 			//TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "WdfIoQueueCreate failed (Manual Queue) %!STATUS!", status);
 			return status;
 		}
@@ -204,7 +208,8 @@ ButtonBoxCreateDevice(
 		timerAttributes.ParentObject = device;
 
 		status = WdfTimerCreate(&timerConfig, &timerAttributes, &devCtx->readTimer);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			KdBreakPoint();
 			//TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "WdfTimerCreate failed %!STATUS!", status);
@@ -221,7 +226,7 @@ ButtonBoxCreateDevice(
 NTSTATUS ButtonBoxEvtHandleQueryIrp(
 	_In_    WDFDEVICE Device,
 	_Inout_ PIRP      Irp
-	)
+)
 {
 	NTSTATUS status = STATUS_SUCCESS;
 	PIO_STACK_LOCATION IrpSp;
@@ -231,36 +236,41 @@ NTSTATUS ButtonBoxEvtHandleQueryIrp(
 
 	// get current IRP stack location
 	IrpSp = IoGetCurrentIrpStackLocation(Irp);
-	if (IrpSp != NULL) {
+	if (IrpSp != NULL)
+	{
 
 		if (IrpSp->MajorFunction == IRP_MJ_PNP &&
-			IrpSp->MinorFunction == IRP_MN_QUERY_ID) {
+			IrpSp->MinorFunction == IRP_MN_QUERY_ID)
+		{
 
-			switch (IrpSp->Parameters.QueryId.IdType) {
+			switch (IrpSp->Parameters.QueryId.IdType)
+			{
 
-			case BusQueryDeviceID:
-			case BusQueryHardwareIDs:
+				case BusQueryDeviceID:
+				case BusQueryHardwareIDs:
 
-				if (devCtx != NULL) {
+					if (devCtx != NULL)
+					{
 
-					len = DEVICE_ID_LEN;
-					devCtx->DeviceId = (PWCHAR)ExAllocatePoolWithTag(NonPagedPool, len, 'beef');
-//					devCtx->DeviceId = (PWCHAR)ExAllocatePool2(POOL_FLAG_NON_PAGED|POOL_FLAG_NON_PAGED_EXECUTE, len, 'beef');
-					if (devCtx->DeviceId != NULL) {
+						len = DEVICE_ID_LEN;
+						devCtx->DeviceId = (PWCHAR)ExAllocatePoolWithTag(NonPagedPool, len, 'beef');
+						//					devCtx->DeviceId = (PWCHAR)ExAllocatePool2(POOL_FLAG_NON_PAGED|POOL_FLAG_NON_PAGED_EXECUTE, len, 'beef');
+						if (devCtx->DeviceId != NULL)
+						{
 
-						RtlZeroMemory(devCtx->DeviceId, len);
-						RtlCopyMemory(devCtx->DeviceId, DeviceId.Buffer, DeviceId.Length);
+							RtlZeroMemory(devCtx->DeviceId, len);
+							RtlCopyMemory(devCtx->DeviceId, DeviceId.Buffer, DeviceId.Length);
 
-						Irp->IoStatus.Information = (ULONG_PTR)devCtx->DeviceId;
-						status = Irp->IoStatus.Status = STATUS_SUCCESS;
+							Irp->IoStatus.Information = (ULONG_PTR)devCtx->DeviceId;
+							status = Irp->IoStatus.Status = STATUS_SUCCESS;
+						}
 					}
-				}
-				break;
+					break;
 
-			default:
-				status = Irp->IoStatus.Status;
-				Irp->IoStatus.Information = (ULONG_PTR)NULL;
-				break;
+				default:
+					status = Irp->IoStatus.Status;
+					Irp->IoStatus.Information = (ULONG_PTR)NULL;
+					break;
 			}
 
 		}
@@ -278,17 +288,18 @@ VOID ButtonBoxBusEvtIoDeviceControl(
 	_In_ size_t     OutputBufferLength,
 	_In_ size_t     InputBufferLength,
 	_In_ ULONG      IoControlCode
-	)
+)
 {
 	UNREFERENCED_PARAMETER(Queue);
 	UNREFERENCED_PARAMETER(OutputBufferLength);
 	UNREFERENCED_PARAMETER(InputBufferLength);
 	UNREFERENCED_PARAMETER(IoControlCode);
 
-	switch (IoControlCode) {
+	switch (IoControlCode)
+	{
 
-	default:
-		break;
+		default:
+			break;
 	}
 
 	WdfRequestComplete(Request, STATUS_SUCCESS);
@@ -310,7 +321,7 @@ NTSTATUS ButtonBoxEvtDevicePrepareHardware(
 	_In_ WDFDEVICE    Device,
 	_In_ WDFCMRESLIST ResourcesRaw,
 	_In_ WDFCMRESLIST ResourcesTranslated
-	)
+)
 {
 	UNREFERENCED_PARAMETER(ResourcesRaw);
 	UNREFERENCED_PARAMETER(ResourcesTranslated);
@@ -325,7 +336,8 @@ NTSTATUS ButtonBoxEvtDevicePrepareHardware(
 	KdPrint(("ButtonBoxEvtDevicePrepareHardware called!\n"));
 
 	devCtx = DeviceGetContext(Device);
-	if (devCtx != NULL) {
+	if (devCtx != NULL)
+	{
 
 		// open an I/O target to the serial port driver to establish
 		// the communication channel with the ButtonBox
@@ -335,7 +347,8 @@ NTSTATUS ButtonBoxEvtDevicePrepareHardware(
 		attrib.ParentObject = Device; // set the device as parent
 
 		status = WdfIoTargetCreate(Device, &attrib, &ioTarget);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			KdBreakPoint();
 			//TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "WdfIoTargetCreate failed! %!STATUS!", status);
@@ -348,7 +361,8 @@ NTSTATUS ButtonBoxEvtDevicePrepareHardware(
 		targetParams.FileAttributes = FILE_ATTRIBUTE_NORMAL;
 
 		status = WdfIoTargetOpen(ioTarget, &targetParams);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			KdBreakPoint();
 			//TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "WdfIoTargetOpen failed! %!STATUS!", status);
@@ -358,7 +372,8 @@ NTSTATUS ButtonBoxEvtDevicePrepareHardware(
 		devCtx->serialIoTarget = ioTarget;
 
 		status = SerialInitPort(Device);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			KdBreakPoint();
 
@@ -386,7 +401,7 @@ framework calls it during the following transitions:
 NTSTATUS ButtonBoxEvtDeviceReleaseHardware(
 	_In_ WDFDEVICE    Device,
 	_In_ WDFCMRESLIST ResourcesTranslated
-	)
+)
 {
 	UNREFERENCED_PARAMETER(ResourcesTranslated);
 
@@ -396,7 +411,8 @@ NTSTATUS ButtonBoxEvtDeviceReleaseHardware(
 	KdPrint(("ButtonBoxEvtDeviceReleaseHardware called!\n"));
 
 	devCtx = DeviceGetContext(Device);
-	if (devCtx != NULL) {
+	if (devCtx != NULL)
+	{
 		// close channel to serial port driver
 		// ...
 
@@ -417,7 +433,7 @@ are needed when the driver's device enters the D0 power state.
 NTSTATUS ButtonBoxEvtDeviceD0Entry(
 	_In_ WDFDEVICE              Device,
 	_In_ WDF_POWER_DEVICE_STATE PreviousState
-	)
+)
 {
 	PDEVICE_CONTEXT devCtx = DeviceGetContext(Device);
 	NTSTATUS status = STATUS_SUCCESS;
@@ -427,7 +443,8 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 
 	DbgPrint("ButtonBoxEvtDeviceD0Entry called!\n");
 
-	if (devCtx != NULL) {
+	if (devCtx != NULL)
+	{
 
 		// since the device is now prepared and now also
 		// powered, we can start the actual data reception
@@ -446,12 +463,13 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 		oa.ParentObject = devCtx->serialIoTarget; // delete request object when IoTarget object is deleted
 
 		status = WdfRequestCreate(&oa, devCtx->serialIoTarget, &devCtx->serialReadRequest);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			ASSERT(NT_SUCCESS(status));
 			return status;
 		}
-		
+
 		// create a memory object for the read request
 		WDF_OBJECT_ATTRIBUTES_INIT(&oa);
 		oa.ParentObject = devCtx->serialReadRequest;
@@ -462,7 +480,8 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 			14,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
 			&devCtx->requestMemory,
 			NULL);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			ASSERT(NT_SUCCESS(status));
 			WdfObjectDelete(devCtx->serialReadRequest);
@@ -472,7 +491,8 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 
 		// and a second memory object that describes the RX ring buffer
 		status = WdfMemoryCreate(&oa, NonPagedPool, 'BoBu', RX_BUF_LEN, &devCtx->rxRingBufMem, &devCtx->rxBuf.buf);
-		if (!NT_SUCCESS(status)) {
+		if (!NT_SUCCESS(status))
+		{
 
 			ASSERT(NT_SUCCESS(status));
 			WdfObjectDelete(devCtx->serialReadRequest);
@@ -482,11 +502,12 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 
 		// format the request object for asynchronous read
 		status = WdfIoTargetFormatRequestForRead(devCtx->serialIoTarget,
-			devCtx->serialReadRequest,
-			devCtx->requestMemory,
-			NULL, // first read from device so no offset for rx buffer
-			NULL);
-		if (!NT_SUCCESS(status)) {
+												 devCtx->serialReadRequest,
+												 devCtx->requestMemory,
+												 NULL, // first read from device so no offset for rx buffer
+												 NULL);
+		if (!NT_SUCCESS(status))
+		{
 
 			ASSERT(NT_SUCCESS(status));
 			WdfObjectDelete(devCtx->requestMemory);
@@ -500,9 +521,11 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 		WdfRequestSetCompletionRoutine(devCtx->serialReadRequest, SerialReadComplete, devCtx);
 
 		// send the initial request
-		if (!WdfRequestSend(devCtx->serialReadRequest, devCtx->serialIoTarget, NULL)) {
+		if (!WdfRequestSend(devCtx->serialReadRequest, devCtx->serialIoTarget, NULL))
+		{
 			status = WdfRequestGetStatus(devCtx->serialReadRequest);
-			if (!NT_SUCCESS(status)) {
+			if (!NT_SUCCESS(status))
+			{
 
 				ASSERT(NT_SUCCESS(status));
 				WdfObjectDelete(devCtx->requestMemory);
@@ -531,13 +554,12 @@ needed when the driver's device leaves the D0 power state.
 NTSTATUS ButtonBoxEvtDeviceD0Exit(
 	_In_ WDFDEVICE              Device,
 	_In_ WDF_POWER_DEVICE_STATE TargetState
-	)
+)
 {
 	UNREFERENCED_PARAMETER(Device);
 	UNREFERENCED_PARAMETER(TargetState);
 
 	NTSTATUS status = STATUS_SUCCESS;
-
 	DbgPrint("ButtonBoxEvtDeviceD0Exit called!\n");
 
 	return status;

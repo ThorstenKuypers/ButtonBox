@@ -6,13 +6,13 @@
 
 
 NTSTATUS UtilSendIoctlSync(WDFIOTARGET ioTarget,
-	ULONG ioctl,
-	BOOLEAN Internal,
-	PVOID inputBuffer,
-	ULONG inputBufferLength,
-	PVOID outputBuffer,
-	ULONG outputBufferLength,
-	PULONG bytesReturned)
+						   ULONG ioctl,
+						   BOOLEAN Internal,
+						   PVOID inputBuffer,
+						   ULONG inputBufferLength,
+						   PVOID outputBuffer,
+						   ULONG outputBufferLength,
+						   PULONG bytesReturned)
 {
 	NTSTATUS status = STATUS_SUCCESS;
 	WDF_MEMORY_DESCRIPTOR inputMemory;
@@ -33,7 +33,8 @@ NTSTATUS UtilSendIoctlSync(WDFIOTARGET ioTarget,
 
 	//status = WdfRequestCreate(WDF_NO_OBJECT_ATTRIBUTES, ioTarget, &Request);
 
-	if (Internal) {
+	if (Internal)
+	{
 
 		status = WdfIoTargetSendInternalIoctlSynchronously(
 			ioTarget,
@@ -44,7 +45,8 @@ NTSTATUS UtilSendIoctlSync(WDFIOTARGET ioTarget,
 			&opt,
 			(PULONG_PTR)&ret);
 	}
-	else {
+	else
+	{
 		status = WdfIoTargetSendIoctlSynchronously(
 			ioTarget,
 			WDF_NO_HANDLE,
@@ -54,7 +56,8 @@ NTSTATUS UtilSendIoctlSync(WDFIOTARGET ioTarget,
 			&opt,
 			(PULONG_PTR)&ret);
 	}
-	if (!NT_SUCCESS(status)) {
+	if (!NT_SUCCESS(status))
+	{
 
 		KdBreakPoint();
 
@@ -75,19 +78,22 @@ NTSTATUS CopyToOutputBuffer(WDFREQUEST Request, PVOID buf, size_t bufLen)
 	size_t len = 0;
 
 	status = WdfRequestRetrieveOutputMemory(Request, &wdfMem);
-	if (!NT_SUCCESS(status)) {
+	if (!NT_SUCCESS(status))
+	{
 
 		KdPrint(("WdfRequestRetrieveOutputMemory failed with status: 0x%08X!\n", status));
 		return status;
 	}
 
 	PVOID b = WdfMemoryGetBuffer(wdfMem, &len);
-	if (b == NULL) {
+	if (b == NULL)
+	{
 
 		KdBreakPoint();
 	}
 
-	if (len < bufLen) {
+	if (len < bufLen)
+	{
 
 		KdBreakPoint();
 		KdPrint(("Insufficient memory! len: 0x%08X -- bufLen: 0x%08X\n", len, bufLen));
@@ -95,7 +101,8 @@ NTSTATUS CopyToOutputBuffer(WDFREQUEST Request, PVOID buf, size_t bufLen)
 	}
 
 	status = WdfMemoryCopyFromBuffer(wdfMem, 0, buf, bufLen);
-	if (!NT_SUCCESS(status)) {
+	if (!NT_SUCCESS(status))
+	{
 
 		KdPrint(("WdfMemoryCopyFromBuffer failed with status: 0x%08X\n", status));
 		return status;

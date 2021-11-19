@@ -232,7 +232,7 @@ VOID ButtonBoxEvtReadInput(
 	int avail = 0; // bytes available to be read from serial port
 	int ret = 0;
 	ULONG len = 0;
-	ULONG_PTR read;
+	//ULONG_PTR read;
 
 	dev = WdfTimerGetParentObject(Timer);
 	if (dev != NULL)
@@ -254,7 +254,7 @@ VOID ButtonBoxEvtReadInput(
 				//WDF_DEVICE_POWER_STATE ps = WdfDeviceGetDevicePowerState(WdfIoTargetGetDevice(devCtx->serialIoTarget));
 				//WdfRequestSetCompletionRoutine(devCtx->serialReadRequest, SerialReadComplete, devCtx);
 				//BOOLEAN b = WdfRequestSend(devCtx->serialReadRequest, devCtx->serialIoTarget, NULL);
-				
+
 				//WDF_MEMORY_DESCRIPTOR memBuf;
 				//WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&memBuf, devCtx->rxRingBufMem, NULL);
 				//WDF_REQUEST_SEND_OPTIONS opt;
@@ -316,7 +316,7 @@ VOID ButtonBoxEvtReadInput(
 								ret = SerialRead(devCtx, hidReport, HID_INPUT_REPORT_LEN);
 
 
-							return;
+							//return;
 						}
 						else
 						{
