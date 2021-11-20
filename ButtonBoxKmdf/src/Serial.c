@@ -171,6 +171,10 @@ void SerialReadComplete(
 	PUCHAR buf = NULL;
 	WDF_REQUEST_REUSE_PARAMS reqParams;
 	NTSTATUS status = STATUS_SUCCESS;
+	WDF_MEMORY_DESCRIPTOR payMem;
+	UCHAR hdr = 0, pay[16] = { 0 };
+	ULONG len = 0;
+	ULONG_PTR ret = 0;
 
 	UNREFERENCED_PARAMETER(Request);
 	UNREFERENCED_PARAMETER(Target);
@@ -187,14 +191,27 @@ void SerialReadComplete(
 			buf = (PUCHAR)WdfMemoryGetBuffer(Params->Parameters.Read.Buffer, NULL);
 			if (buf != NULL)
 			{
+				hdr = *buf;
+				len = HDR_LEN(hdr);
+				WDF_REQUEST_SEND_OPTIONS ro;
+				WDF_REQUEST_SEND_OPTIONS_INIT(&ro, 0);
+				WDF_REQUEST_SEND_OPTIONS_SET_TIMEOUT(&ro, WDF_REL_TIMEOUT_IN_MS(3));
+				WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&payMem, &pay, len);
 
-				// copy the received bytes to the ring-buffer
-				for (int i = 0; i < bytesReturned; i++)
+				status = WdfIoTargetSendReadSynchronously(devCtx->serialIoTarget, NULL, &payMem, NULL, &ro, &ret);
+				if (NT_SUCCESS(status))
 				{
+					UCHAR b[20] = { 0 };
+					b[0] = hdr;
+					RtlCopyMemory(&b[1], pay, ret);
+					// copy the received bytes to the ring-buffer
+					for (int i = 0; i < (ret + sizeof(UCHAR)); i++)
+					{
 
-					devCtx->rxBuf.buf[devCtx->rxBuf.writeTo] = buf[i];
-					devCtx->rxBuf.writeTo++;
-					devCtx->rxBuf.writeTo %= 0xFF;
+						devCtx->rxBuf.buf[devCtx->rxBuf.writeTo] = b[i];
+						devCtx->rxBuf.writeTo++;
+						devCtx->rxBuf.writeTo %= 0xFF;
+					}
 				}
 			}
 		}
@@ -237,6 +254,10 @@ void SerialReadComplete(
 		}
 
 		// send request again
-		WdfRequestSend(Request, devCtx->serialIoTarget, NULL);
+		if (!WdfRequestSend(Request, devCtx->serialIoTarget, NULL))
+		{
+			status = WdfRequestGetInformation(Request);
+
+		}
 	}
 }
