@@ -228,11 +228,12 @@ VOID ButtonBoxEvtReadInput(
 	WDFREQUEST Request;
 	NTSTATUS status = STATUS_SUCCESS;
 	UCHAR hidReport[HID_INPUT_REPORT_LEN] = { 0 };
-	UCHAR hdr = 0;
+	UCHAR hdr = 0; // , pay[16] = { 0 };
+	//WDF_MEMORY_DESCRIPTOR hdrMem, payMem;
 	int avail = 0; // bytes available to be read from serial port
-	int ret = 0;
 	ULONG len = 0;
-	//ULONG_PTR read;
+	int ret = 0;
+	//WDF_REQUEST_SEND_OPTIONS ro;
 
 	dev = WdfTimerGetParentObject(Timer);
 	if (dev != NULL)
@@ -245,28 +246,11 @@ VOID ButtonBoxEvtReadInput(
 			// receive data from the physical button box via 
 			// the I/O target to serial port
 			// ...
-			if (devCtx->serialReadRequest != NULL)
-			{
-				//WDF_REQUEST_REUSE_PARAMS reqParams;
-				//WDF_REQUEST_REUSE_PARAMS_INIT(&reqParams, WDF_REQUEST_REUSE_NO_FLAGS, STATUS_SUCCESS);
-				//WdfRequestReuse(devCtx->serialReadRequest, &reqParams);
+			//WDF_REQUEST_SEND_OPTIONS_INIT(&ro, 0);
+			//WDF_REQUEST_SEND_OPTIONS_SET_TIMEOUT(&ro, WDF_REL_TIMEOUT_IN_MS(3));
+			//WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&hdrMem, &hdr, sizeof(UCHAR));
 
-				//WDF_DEVICE_POWER_STATE ps = WdfDeviceGetDevicePowerState(WdfIoTargetGetDevice(devCtx->serialIoTarget));
-				//WdfRequestSetCompletionRoutine(devCtx->serialReadRequest, SerialReadComplete, devCtx);
-				//BOOLEAN b = WdfRequestSend(devCtx->serialReadRequest, devCtx->serialIoTarget, NULL);
-
-				//WDF_MEMORY_DESCRIPTOR memBuf;
-				//WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&memBuf, devCtx->rxRingBufMem, NULL);
-				//WDF_REQUEST_SEND_OPTIONS opt;
-				//WDF_REQUEST_SEND_OPTIONS_INIT(&opt, )
-
-				//status = WdfIoTargetSendReadSynchronously(devCtx->serialIoTarget, devCtx->serialReadRequest, &memBuf, NULL, NULL, &read);
-				//if (!NT_SUCCESS(status))
-				//{
-				//	KdBreakPoint();
-				//}
-			}
-
+			//status = WdfIoTargetSendReadSynchronously(devCtx->serialIoTarget, NULL, &hdrMem, NULL, &ro, &ret);
 			// check that at least a header byte is available
 			avail = SerialCheckBytesAvailable(devCtx);
 			if (avail < 0)
@@ -276,10 +260,10 @@ VOID ButtonBoxEvtReadInput(
 				return;
 			}
 
-			if (avail >= 1)
+			if (avail > 0)
 			{
 
-				// read in header byte
+				//read in header byte
 				ret = SerialRead(devCtx, (PUCHAR)&hdr, sizeof(UCHAR));
 				if (ret < 0)
 				{
@@ -297,15 +281,16 @@ VOID ButtonBoxEvtReadInput(
 				}
 				else if (CHECK_RECV(hdr))
 				{ // ButtonBox input report
-
+					//WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&payMem, pay, len);
+					//status = WdfIoTargetSendReadSynchronously(devCtx->serialIoTarget, NULL, &payMem, NULL, &ro, &ret);
 					if (len > 0)
 					{
 
+						//RtlCopyMemory(hidReport, pay, len);
 						// check that at least hdr.len bytes are availbale to read 
 						avail = SerialCheckBytesAvailable(devCtx);
 						if (avail >= (int)len)
 						{
-
 
 							if (len < HID_INPUT_REPORT_LEN)
 							{
@@ -314,13 +299,13 @@ VOID ButtonBoxEvtReadInput(
 							}
 							else
 								ret = SerialRead(devCtx, hidReport, HID_INPUT_REPORT_LEN);
-
-
-							//return;
 						}
 						else
 						{
-							//ASSERT(avail >= (int)len);
+							// move the readfrom position in rx ring buffer back one 
+							// so the next read can get afull packet again
+							devCtx->rxBuf.readFrom--;
+							devCtx->rxBuf.readFrom &= 0xFF;
 							return;
 						}
 					}
@@ -339,5 +324,4 @@ VOID ButtonBoxEvtReadInput(
 			WdfRequestCompleteWithInformation(Request, status, HID_INPUT_REPORT_LEN);
 		}
 	}
-
 }

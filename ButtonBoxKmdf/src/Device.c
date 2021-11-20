@@ -199,9 +199,12 @@ Return Value:
 
 		// create timer for the polling interval of the serial port interface
 		WDF_TIMER_CONFIG_INIT_PERIODIC(&timerConfig, ButtonBoxEvtReadInput, 16); // 16ms ~60Hz
+		//timerConfig.AutomaticSerialization = TRUE;
 		//WDF_TIMER_CONFIG_INIT(&timerConfig, ButtonBoxEvtReadInput); // 8ms
 
 		WDF_OBJECT_ATTRIBUTES_INIT(&timerAttributes);
+		//timerAttributes.ExecutionLevel = WdfExecutionLevelPassive;
+		//timerAttributes.SynchronizationScope = WdfSynchronizationScopeDevice;
 		// set the device as parent object for the timer object so
 		// we can get access to the device and its context data
 		// in the timer routine
@@ -477,7 +480,7 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 			&oa,
 			NonPagedPool,
 			'BoBu',
-			14,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
+			16,	// we CANNOT use the full buffer length, b/c the request is completed only when this number of bytes available
 			&devCtx->requestMemory,
 			NULL);
 		if (!NT_SUCCESS(status))
@@ -537,7 +540,7 @@ NTSTATUS ButtonBoxEvtDeviceD0Entry(
 		}
 
 		// start the polling timer for read requests
-		WdfTimerStart(devCtx->readTimer, WDF_REL_TIMEOUT_IN_MS(8));
+		WdfTimerStart(devCtx->readTimer, WDF_REL_TIMEOUT_IN_MS(16));
 		return status;
 	}
 
