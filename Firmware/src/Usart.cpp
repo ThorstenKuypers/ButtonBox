@@ -5,10 +5,10 @@
 *  Author: iceri
 */
 
-#include "../inc/Usart.h"
-#include "../inc/hal.h"
+#include "../include/Usart.h"
+#include "../include/hal.h"
 
-Usart* Usart::_usart;
+Usart *Usart::_usart;
 
 Usart::Usart()
 //_rxReadFrom(0),
@@ -24,7 +24,6 @@ Usart::Usart()
 
 Usart::~Usart()
 {
-	
 }
 
 void Usart::Init()
@@ -33,11 +32,11 @@ void Usart::Init()
 	// 12 = 76.8k @ 16.000 MHz
 	UBRRH = 0;
 	UBRRL = 51;
-	
+
 	// frame format: 8N1
-	UCSRC = _BV(URSEL)|_BV(UCSZ1)|_BV(UCSZ0);
+	UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);
 	// enable receiver/transmitter - interrupt driven
-	UCSRB = _BV(RXCIE)|_BV(RXEN)|_BV(TXEN)|_BV(TXCIE);
+	UCSRB = _BV(RXCIE) | _BV(RXEN) | _BV(TXEN) | _BV(TXCIE);
 }
 
 void Usart::PutByte(uint8_t byte)
@@ -55,18 +54,19 @@ uint8_t Usart::GetByte()
 	return 0;
 }
 
-void Usart::Write(uint8_t* buf, uint8_t len)
+void Usart::Write(uint8_t *buf, uint8_t len)
 {
 	uint8_t c = len;
-	while (c > 0) {
+	while (c > 0)
+	{
 		_txBuf.PutByte(*buf++);
 		c--;
 	}
-	
-	UCSRB |=_BV(UDRIE);
+
+	UCSRB |= _BV(UDRIE);
 }
 
-uint8_t Usart::Read(uint8_t* buf, uint8_t buflen)
+uint8_t Usart::Read(uint8_t *buf, uint8_t buflen)
 {
 	return 0;
 }
@@ -76,32 +76,31 @@ uint8_t Usart::Available()
 	return _rxBuf.Available();
 }
 
-
 // USART Data register empty interrupt handler
 void UDRE_vec()
 {
-	Usart* u =Usart::_usart;
-	
-	if (u->_txBuf.Available() ==0)
+	Usart *u = Usart::_usart;
+
+	if (u->_txBuf.Available() == 0)
 	{
 		// no more bytes in TX-buffer, so disable UDRE interrupt
 		UCSRB &= ~_BV(UDRIE);
 
 		// clear UDRE flag, to stop further interrupts
-		//UCSRA = _BV(UDRE);
+		UCSRA = _BV(UDRE);
 	}
 	else
 	{
 		// get byte from TX-buffer and send it down the line
-		uint8_t b =u->_txBuf.GetByte();
-		UDR =b;
+		uint8_t b = u->_txBuf.GetByte();
+		UDR = b;
 	}
 }
 
 // USART Data received interrupt handler
 void RXC_vec()
 {
-	Usart* u =Usart::_usart;
+	Usart *u = Usart::_usart;
 
 	byte_t b = UDR;
 	u->_rxBuf.PutByte(b);

@@ -1,0 +1,6 @@
+(sym_lib_table
+  (lib (name simDash-cache)(type Legacy)(uri ${KIPRJMOD}/simDash-cache.lib)(options "")(descr ""))
+  (lib (name simDash-ECU-cache)(type Legacy)(uri ${KIPRJMOD}/simDash-ECU-cache.lib)(options "")(descr ""))
+  (lib (name simDash-ECU-rescue)(type Legacy)(uri ${KIPRJMOD}/simDash-ECU-rescue.lib)(options "")(descr ""))
+  (lib (name simDash-rescue)(type Legacy)(uri ${KIPRJMOD}/simDash-rescue.lib)(options "")(descr ""))
+)

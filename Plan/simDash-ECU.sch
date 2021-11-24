@@ -1,0 +1,684 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 4 4
+Title "simDash-ECU.sch"
+Date "23 mar 2014"
+Rev "1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text Notes 4450 4000 0    60   ~ 0
+to DSUB-9
+Text Notes 1600 2050 0    60   ~ 0
+15
+Text Notes 1600 1550 0    60   ~ 0
+16
+Wire Wire Line
+	1550 1500 1550 1600
+Wire Wire Line
+	3950 1850 4050 1850
+Wire Wire Line
+	4550 1850 4550 2750
+Connection ~ 4050 2450
+Wire Wire Line
+	3950 2450 4050 2450
+Wire Wire Line
+	4500 2450 4500 2250
+Wire Wire Line
+	8500 4150 8900 4150
+Wire Wire Line
+	2350 3050 1900 3050
+Wire Wire Line
+	4650 3400 4650 3150
+Wire Wire Line
+	4650 3150 3950 3150
+Wire Wire Line
+	4850 3400 4850 2950
+Wire Wire Line
+	4850 2950 3950 2950
+Connection ~ 2500 6200
+Wire Wire Line
+	1150 5550 1150 5650
+Wire Wire Line
+	1150 6200 2500 6200
+Connection ~ 3050 6350
+Wire Wire Line
+	4050 2500 4050 2450
+Connection ~ 3500 5550
+Wire Wire Line
+	8500 4750 9050 4750
+Wire Wire Line
+	8500 3950 8900 3950
+Wire Wire Line
+	8500 3750 8900 3750
+Connection ~ 8500 2350
+Wire Wire Line
+	8500 2850 8500 2350
+Wire Wire Line
+	8600 2350 8500 2350
+Connection ~ 3600 5550
+Wire Wire Line
+	3600 5800 3600 5550
+Connection ~ 3050 6200
+Wire Wire Line
+	4050 5550 3600 5550
+Wire Wire Line
+	2650 5550 2500 5550
+Wire Wire Line
+	2350 3150 2000 3150
+Wire Wire Line
+	2350 2350 2000 2350
+Wire Wire Line
+	2000 1800 2350 1800
+Wire Wire Line
+	2350 1800 2350 1850
+Connection ~ 4050 1850
+Wire Wire Line
+	4050 1700 4050 1850
+Wire Wire Line
+	9000 3350 8500 3350
+Connection ~ 6150 4100
+Wire Wire Line
+	6600 3750 6600 4100
+Wire Wire Line
+	6600 4100 6150 4100
+Connection ~ 5550 3200
+Wire Wire Line
+	5550 3200 5600 3200
+Connection ~ 5550 4100
+Wire Wire Line
+	5550 4100 5600 4100
+Connection ~ 6400 2850
+Wire Wire Line
+	6400 2700 6400 2850
+Connection ~ 7500 5500
+Wire Wire Line
+	7500 5500 6250 5500
+Connection ~ 6350 3250
+Wire Wire Line
+	6350 3300 6350 3250
+Wire Wire Line
+	6600 3250 6350 3250
+Wire Wire Line
+	7500 2400 7500 2450
+Wire Wire Line
+	7500 5550 7500 5500
+Wire Wire Line
+	6600 2850 6400 2850
+Wire Wire Line
+	6600 3050 5550 3050
+Wire Wire Line
+	5550 5500 5550 4100
+Connection ~ 5550 3050
+Wire Wire Line
+	6400 2200 7350 2200
+Wire Wire Line
+	7350 2200 7350 2450
+Connection ~ 7500 2450
+Wire Wire Line
+	5550 3500 5600 3500
+Connection ~ 5550 3500
+Wire Wire Line
+	6000 3200 6050 3200
+Wire Wire Line
+	6050 3200 6050 3150
+Wire Wire Line
+	6050 3150 6350 3150
+Connection ~ 6350 3150
+Wire Wire Line
+	6000 3500 6150 3500
+Wire Wire Line
+	6600 3500 6600 3550
+Connection ~ 6150 3500
+Wire Wire Line
+	6250 5000 6250 5050
+Wire Wire Line
+	8500 3250 9000 3250
+Wire Wire Line
+	2350 2250 2000 2250
+Wire Wire Line
+	2000 2250 2000 2200
+Wire Wire Line
+	2350 2750 2000 2750
+Wire Wire Line
+	2350 2950 2000 2950
+Wire Wire Line
+	2500 5800 2500 5550
+Connection ~ 2500 5550
+Wire Wire Line
+	3050 6400 3050 6350
+Wire Wire Line
+	7950 2350 7950 2450
+Wire Wire Line
+	7950 2450 7500 2450
+Wire Wire Line
+	9100 2350 9300 2350
+Wire Wire Line
+	9300 2350 9300 2450
+Wire Wire Line
+	8500 3850 8900 3850
+Wire Wire Line
+	8500 4650 9050 4650
+Wire Wire Line
+	6250 5450 6250 5500
+Connection ~ 6250 5500
+Wire Wire Line
+	1400 5550 2100 5550
+Wire Wire Line
+	1250 5550 1250 5650
+Wire Wire Line
+	1250 5650 1150 5650
+Connection ~ 1150 5650
+Wire Wire Line
+	3950 3050 4750 3050
+Wire Wire Line
+	4750 3050 4750 3400
+Wire Wire Line
+	3950 3250 4550 3250
+Wire Wire Line
+	4550 3250 4550 3400
+Wire Wire Line
+	1900 3250 2350 3250
+Wire Wire Line
+	3950 2250 4100 2250
+Wire Wire Line
+	3950 2750 4150 2750
+Wire Wire Line
+	1550 2000 1550 2100
+$Comp
+L simDash-rescue:GND #PWR043
+U 1 1 532CD22E
+P 1550 2100
+F 0 "#PWR043" H 1550 2100 30  0001 C CNN
+F 1 "GND" H 1550 2030 30  0001 C CNN
+F 2 "" H 1550 2100 50  0001 C CNN
+F 3 "" H 1550 2100 50  0001 C CNN
+	1    1550 2100
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:+5V #PWR044
+U 1 1 532CD22C
+P 1550 1500
+AR Path="/532CD22C" Ref="#PWR044"  Part="1" 
+AR Path="/5328C00D/532CD22C" Ref="#PWR044"  Part="1" 
+F 0 "#PWR044" H 1550 1590 20  0001 C CNN
+F 1 "+5V" H 1550 1590 30  0000 C CNN
+F 2 "" H 1550 1500 50  0001 C CNN
+F 3 "" H 1550 1500 50  0001 C CNN
+	1    1550 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C18
+U 1 1 532CD18A
+P 4350 2750
+F 0 "C18" H 4400 2850 50  0000 L CNN
+F 1 "1µ" H 4400 2650 50  0000 L CNN
+F 2 "" H 4350 2750 50  0001 C CNN
+F 3 "" H 4350 2750 50  0001 C CNN
+	1    4350 2750
+	0    -1   -1   0   
+$EndComp
+NoConn ~ 8500 4050
+Text Label 3950 3250 0    60   ~ 0
+CTS
+Text Label 3950 3150 0    60   ~ 0
+TX
+Text Label 3950 3050 0    60   ~ 0
+DTR
+Text Label 3950 2950 0    60   ~ 0
+RX
+Text Label 1900 3250 0    60   ~ 0
+INT2
+Text Label 1900 3050 0    60   ~ 0
+INT1
+$Comp
+L simDash-rescue:CONN_4 P8
+U 1 1 532CCFCC
+P 4700 3750
+F 0 "P8" V 4650 3750 50  0000 C CNN
+F 1 "CONN_4" V 4750 3750 50  0000 C CNN
+F 2 "" H 4700 3750 50  0001 C CNN
+F 3 "" H 4700 3750 50  0001 C CNN
+	1    4700 3750
+	0    1    1    0   
+$EndComp
+Text Notes 1950 5050 0    60   ~ 0
+Main power switch
+$Comp
+L simDash-rescue:JACK_2P J1
+U 1 1 532CCD27
+P 1250 5100
+F 0 "J1" H 900 4900 60  0000 C CNN
+F 1 "JACK_2P" H 1100 5350 60  0000 C CNN
+F 2 "" H 1250 5100 50  0001 C CNN
+F 3 "" H 1250 5100 50  0001 C CNN
+	1    1250 5100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG045
+U 1 1 5328CDC4
+P 3050 6350
+F 0 "#FLG045" H 3050 6620 30  0001 C CNN
+F 1 "PWR_FLAG" H 3050 6580 30  0000 C CNN
+F 2 "" H 3050 6350 50  0001 C CNN
+F 3 "" H 3050 6350 50  0001 C CNN
+	1    3050 6350
+	0    -1   -1   0   
+$EndComp
+NoConn ~ 8500 5150
+NoConn ~ 8500 5050
+NoConn ~ 8500 4950
+NoConn ~ 8500 4850
+NoConn ~ 8500 4450
+NoConn ~ 8500 4350
+NoConn ~ 8500 4250
+NoConn ~ 8500 3150
+NoConn ~ 8500 3050
+NoConn ~ 8500 2950
+$Comp
+L simDash-rescue:ATMEGA8-P IC1
+U 1 1 5328A804
+P 7500 3950
+F 0 "IC1" H 6800 5200 50  0000 L BNN
+F 1 "ATMEGA8-P" H 7750 2550 50  0000 L BNN
+F 2 "DIL28" H 8000 2475 50  0001 C CNN
+F 3 "" H 7500 3950 50  0001 C CNN
+	1    7500 3950
+	1    0    0    -1  
+$EndComp
+Text HLabel 9050 4700 0    60   Output ~ 0
+HC164_CLK
+Text HLabel 9050 4600 0    60   Output ~ 0
+HC164_SI
+Text Label 8900 4150 2    60   ~ 0
+INT1
+Text Label 8900 3950 2    60   ~ 0
+INT2
+Text Label 8500 3750 0    60   ~ 0
+RXD
+Text Label 8900 3850 2    60   ~ 0
+TXD
+$Comp
+L power:PWR_FLAG #FLG046
+U 1 1 5328C2EF
+P 3500 5550
+F 0 "#FLG046" H 3500 5820 30  0001 C CNN
+F 1 "PWR_FLAG" H 3500 5780 30  0000 C CNN
+F 2 "" H 3500 5550 50  0001 C CNN
+F 3 "" H 3500 5550 50  0001 C CNN
+	1    3500 5550
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:GND #PWR047
+U 1 1 5328C2DC
+P 9300 2450
+F 0 "#PWR047" H 9300 2450 30  0001 C CNN
+F 1 "GND" H 9300 2380 30  0001 C CNN
+F 2 "" H 9300 2450 50  0001 C CNN
+F 3 "" H 9300 2450 50  0001 C CNN
+	1    9300 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:THERMISTOR TH1
+U 1 1 5328C2B4
+P 8850 2350
+F 0 "TH1" V 8950 2400 50  0000 C CNN
+F 1 "THERMISTOR" V 8750 2350 50  0000 C CNN
+F 2 "" H 8850 2350 50  0001 C CNN
+F 3 "" H 8850 2350 50  0001 C CNN
+	1    8850 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L simDash-rescue:R R2
+U 1 1 5328C295
+P 8200 2350
+F 0 "R2" V 8280 2350 50  0000 C CNN
+F 1 "100" V 8200 2350 50  0000 C CNN
+F 2 "" H 8200 2350 50  0001 C CNN
+F 3 "" H 8200 2350 50  0001 C CNN
+	1    8200 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L simDash-rescue:GND #PWR048
+U 1 1 5328C276
+P 3050 6400
+F 0 "#PWR048" H 3050 6400 30  0001 C CNN
+F 1 "GND" H 3050 6330 30  0001 C CNN
+F 2 "" H 3050 6400 50  0001 C CNN
+F 3 "" H 3050 6400 50  0001 C CNN
+	1    3050 6400
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:+5V #PWR049
+U 1 1 5328C255
+P 4050 5550
+AR Path="/5328C255" Ref="#PWR049"  Part="1" 
+AR Path="/5328C00D/5328C255" Ref="#PWR049"  Part="1" 
+F 0 "#PWR049" H 4050 5640 20  0001 C CNN
+F 1 "+5V" H 4050 5640 30  0000 C CNN
+F 2 "" H 4050 5550 50  0001 C CNN
+F 3 "" H 4050 5550 50  0001 C CNN
+	1    4050 5550
+	0    1    1    0   
+$EndComp
+$Comp
+L simDash-rescue:CONN_2 P7
+U 1 1 5328C222
+P 2200 5200
+F 0 "P7" V 2150 5200 40  0000 C CNN
+F 1 "CONN_2" V 2250 5200 40  0000 C CNN
+F 2 "" H 2200 5200 50  0001 C CNN
+F 3 "" H 2200 5200 50  0001 C CNN
+	1    2200 5200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L simDash-rescue:CP1 C3
+U 1 1 5328C20B
+P 2500 6000
+F 0 "C3" H 2550 6100 50  0000 L CNN
+F 1 "0,33µ" H 2550 5900 50  0000 L CNN
+F 2 "" H 2500 6000 50  0001 C CNN
+F 3 "" H 2500 6000 50  0001 C CNN
+	1    2500 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C4
+U 1 1 5328C1F5
+P 3600 6000
+F 0 "C4" H 3650 6100 50  0000 L CNN
+F 1 "100n" H 3650 5900 50  0000 L CNN
+F 2 "" H 3600 6000 50  0001 C CNN
+F 3 "" H 3600 6000 50  0001 C CNN
+	1    3600 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:LM7805 U7
+U 1 1 5328C1E4
+P 3050 5600
+F 0 "U7" H 3200 5404 60  0000 C CNN
+F 1 "LM7805" H 3050 5800 60  0000 C CNN
+F 2 "" H 3050 5600 50  0001 C CNN
+F 3 "" H 3050 5600 50  0001 C CNN
+	1    3050 5600
+	1    0    0    -1  
+$EndComp
+Text Label 2000 3150 0    60   ~ 0
+RXD
+Text Label 2000 2950 0    60   ~ 0
+TXD
+$Comp
+L simDash-rescue:C C5
+U 1 1 5328C0EF
+P 1550 1800
+F 0 "C5" H 1600 1900 50  0000 L CNN
+F 1 "1µ" H 1600 1700 50  0000 L CNN
+F 2 "" H 1550 1800 50  0001 C CNN
+F 3 "" H 1550 1800 50  0001 C CNN
+	1    1550 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:GND #PWR050
+U 1 1 5328C0E8
+P 4050 2500
+F 0 "#PWR050" H 4050 2500 30  0001 C CNN
+F 1 "GND" H 4050 2430 30  0001 C CNN
+F 2 "" H 4050 2500 50  0001 C CNN
+F 3 "" H 4050 2500 50  0001 C CNN
+	1    4050 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:+5V #PWR051
+U 1 1 5328C0E4
+P 4050 1700
+AR Path="/5328C0E4" Ref="#PWR051"  Part="1" 
+AR Path="/5328C00D/5328C0E4" Ref="#PWR051"  Part="1" 
+F 0 "#PWR051" H 4050 1790 20  0001 C CNN
+F 1 "+5V" H 4050 1790 30  0000 C CNN
+F 2 "" H 4050 1700 50  0001 C CNN
+F 3 "" H 4050 1700 50  0001 C CNN
+	1    4050 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C2
+U 1 1 5328C0AB
+P 2000 2550
+F 0 "C2" H 2050 2650 50  0000 L CNN
+F 1 "1µ" H 2050 2450 50  0000 L CNN
+F 2 "" H 2000 2550 50  0001 C CNN
+F 3 "" H 2000 2550 50  0001 C CNN
+	1    2000 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C1
+U 1 1 5328C0A6
+P 2000 2000
+F 0 "C1" H 2050 2100 50  0000 L CNN
+F 1 "1µ" H 2050 1900 50  0000 L CNN
+F 2 "" H 2000 2000 50  0001 C CNN
+F 3 "" H 2000 2000 50  0001 C CNN
+	1    2000 2000
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C6
+U 1 1 5328C08F
+P 4300 2250
+F 0 "C6" H 4350 2350 50  0000 L CNN
+F 1 "1µ" H 4350 2150 50  0000 L CNN
+F 2 "" H 4300 2250 50  0001 C CNN
+F 3 "" H 4300 2250 50  0001 C CNN
+	1    4300 2250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L simDash-rescue:MAX232 U8
+U 1 1 5328C068
+P 3150 2550
+F 0 "U8" H 3150 3400 70  0000 C CNN
+F 1 "MAX232" H 3150 1700 70  0000 C CNN
+F 2 "" H 3150 2550 50  0001 C CNN
+F 3 "" H 3150 2550 50  0001 C CNN
+	1    3150 2550
+	1    0    0    -1  
+$EndComp
+Text GLabel 9000 3350 2    60   BiDi ~ 0
+I²C_SCL
+Text GLabel 9000 3250 2    60   BiDi ~ 0
+I²C_SDA
+$Comp
+L simDash-rescue:+5V #PWR052
+U 1 1 5328A9DF
+P 6250 5000
+AR Path="/5328A9DF" Ref="#PWR052"  Part="1" 
+AR Path="/5328C00D/5328A9DF" Ref="#PWR052"  Part="1" 
+F 0 "#PWR052" H 6250 5090 20  0001 C CNN
+F 1 "+5V" H 6250 5090 30  0000 C CNN
+F 2 "" H 6250 5000 50  0001 C CNN
+F 3 "" H 6250 5000 50  0001 C CNN
+	1    6250 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C10
+U 1 1 5328A9D0
+P 6250 5250
+F 0 "C10" H 6300 5350 50  0000 L CNN
+F 1 "100n" H 6300 5150 50  0000 L CNN
+F 2 "" H 6250 5250 50  0001 C CNN
+F 3 "" H 6250 5250 50  0001 C CNN
+	1    6250 5250
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:C C7
+U 1 1 5328A97D
+P 5800 3200
+F 0 "C7" H 5850 3300 50  0000 L CNN
+F 1 "100n" H 5850 3100 50  0000 L CNN
+F 2 "" H 5800 3200 50  0001 C CNN
+F 3 "" H 5800 3200 50  0001 C CNN
+	1    5800 3200
+	0    1    1    0   
+$EndComp
+$Comp
+L simDash-rescue:C C9
+U 1 1 5328A970
+P 5800 4100
+F 0 "C9" H 5850 4200 50  0000 L CNN
+F 1 "22p" H 5850 4000 50  0000 L CNN
+F 2 "" H 5800 4100 50  0001 C CNN
+F 3 "" H 5800 4100 50  0001 C CNN
+	1    5800 4100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L simDash-rescue:C C8
+U 1 1 5328A965
+P 5800 3500
+F 0 "C8" H 5850 3600 50  0000 L CNN
+F 1 "22p" H 5850 3400 50  0000 L CNN
+F 2 "" H 5800 3500 50  0001 C CNN
+F 3 "" H 5800 3500 50  0001 C CNN
+	1    5800 3500
+	0    1    1    0   
+$EndComp
+$Comp
+L simDash-rescue:CRYSTAL X1
+U 1 1 5328A954
+P 6150 3800
+F 0 "X1" H 6150 3950 60  0000 C CNN
+F 1 "16 Mhz" H 6150 3650 60  0000 C CNN
+F 2 "" H 6150 3800 50  0001 C CNN
+F 3 "" H 6150 3800 50  0001 C CNN
+	1    6150 3800
+	0    1    1    0   
+$EndComp
+$Comp
+L simDash-rescue:R R1
+U 1 1 5328A932
+P 6400 2450
+F 0 "R1" V 6480 2450 50  0000 C CNN
+F 1 "10k" V 6400 2450 50  0000 C CNN
+F 2 "" H 6400 2450 50  0001 C CNN
+F 3 "" H 6400 2450 50  0001 C CNN
+	1    6400 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:SW_PUSH SW1
+U 1 1 5328A914
+P 5850 2850
+F 0 "SW1" H 6000 2960 50  0000 C CNN
+F 1 "SW_PUSH" H 5850 2770 50  0000 C CNN
+F 2 "" H 5850 2850 50  0001 C CNN
+F 3 "" H 5850 2850 50  0001 C CNN
+	1    5850 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:+5V #PWR053
+U 1 1 5328A881
+P 6350 3300
+AR Path="/5328A881" Ref="#PWR053"  Part="1" 
+AR Path="/5328C00D/5328A881" Ref="#PWR053"  Part="1" 
+F 0 "#PWR053" H 6350 3390 20  0001 C CNN
+F 1 "+5V" H 6350 3390 30  0000 C CNN
+F 2 "" H 6350 3300 50  0001 C CNN
+F 3 "" H 6350 3300 50  0001 C CNN
+	1    6350 3300
+	-1   0    0    1   
+$EndComp
+$Comp
+L simDash-rescue:GND #PWR054
+U 1 1 5328A843
+P 7500 5550
+F 0 "#PWR054" H 7500 5550 30  0001 C CNN
+F 1 "GND" H 7500 5480 30  0001 C CNN
+F 2 "" H 7500 5550 50  0001 C CNN
+F 3 "" H 7500 5550 50  0001 C CNN
+	1    7500 5550
+	1    0    0    -1  
+$EndComp
+$Comp
+L simDash-rescue:+5V #PWR055
+U 1 1 5328A834
+P 7500 2400
+AR Path="/5328A834" Ref="#PWR055"  Part="1" 
+AR Path="/5328C00D/5328A834" Ref="#PWR055"  Part="1" 
+F 0 "#PWR055" H 7500 2490 20  0001 C CNN
+F 1 "+5V" H 7500 2490 30  0000 C CNN
+F 2 "" H 7500 2400 50  0001 C CNN
+F 3 "" H 7500 2400 50  0001 C CNN
+	1    7500 2400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4050 2450 4500 2450
+Wire Wire Line
+	2500 6200 3050 6200
+Wire Wire Line
+	3050 6350 3050 6200
+Wire Wire Line
+	3500 5550 3450 5550
+Wire Wire Line
+	8500 2350 8450 2350
+Wire Wire Line
+	3600 5550 3500 5550
+Wire Wire Line
+	3050 6200 3600 6200
+Wire Wire Line
+	3050 6200 3050 5850
+Wire Wire Line
+	4050 1850 4550 1850
+Wire Wire Line
+	6150 4100 6000 4100
+Wire Wire Line
+	5550 3200 5550 3050
+Wire Wire Line
+	5550 4100 5550 3500
+Wire Wire Line
+	6400 2850 6150 2850
+Wire Wire Line
+	7500 5500 7500 5450
+Wire Wire Line
+	6350 3250 6350 3150
+Wire Wire Line
+	5550 3050 5550 2850
+Wire Wire Line
+	7500 2450 7500 2550
+Wire Wire Line
+	7500 2450 7350 2450
+Wire Wire Line
+	5550 3500 5550 3200
+Wire Wire Line
+	6350 3150 6600 3150
+Wire Wire Line
+	6150 3500 6600 3500
+Wire Wire Line
+	2500 5550 2300 5550
+Wire Wire Line
+	6250 5500 5550 5500
+Wire Wire Line
+	1150 5650 1150 6200
+$EndSCHEMATC

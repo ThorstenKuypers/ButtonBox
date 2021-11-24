@@ -14,49 +14,47 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
-#define BUF_MAX_VAL(s) s-1
+#define BUF_MAX_VAL(s) s - 1
 
-template<uint8_t size>
+template <uint8_t size>
 class RingBuffer
 {
-	public:
-	
-	RingBuffer() :
-	_readfrom(0),
-	_writeto(0),
-	_avail(0),
-	_bufferSize(size)
+public:
+	RingBuffer() : _readfrom(0),
+				   _writeto(0),
+				   _avail(0),
+				   _bufferSize(size)
 	{
 	}
 
-	RingBuffer(const RingBuffer& b)
+	RingBuffer(const RingBuffer &b)
 	{
-		_avail =b._avail;
-		_bufferSize =b._bufferSize;
-		_buf =b._buf;
-		_writeto =b._writeto;
-		_readfrom =b._readfrom;
+		_avail = b._avail;
+		_bufferSize = b._bufferSize;
+		_buf = b._buf;
+		_writeto = b._writeto;
+		_readfrom = b._readfrom;
 	}
 
-	RingBuffer& operator=(const RingBuffer&& b)
+	RingBuffer &operator=(const RingBuffer &&b)
 	{
-		_avail =b._avail;
-		_buf =b._buf;
-		_bufferSize =b._bufferSize;
-		_readfrom =b._readfrom;
-		_writeto =b._writeto;
-		
+		_avail = b._avail;
+		_buf = b._buf;
+		_bufferSize = b._bufferSize;
+		_readfrom = b._readfrom;
+		_writeto = b._writeto;
+
 		return *this;
 	}
 
 	~RingBuffer() {}
-	
+
 	void PutByte(uint8_t byte)
 	{
 		_buf[_writeto] = byte;
 		_writeto++;
-		_writeto &=BUF_MAX_VAL(_bufferSize);
-		
+		_writeto &= BUF_MAX_VAL(_bufferSize);
+
 		_avail++;
 	}
 
@@ -66,7 +64,7 @@ class RingBuffer
 		_readfrom++;
 		_readfrom &= BUF_MAX_VAL(_bufferSize);
 		_avail--;
-		
+
 		return b;
 	}
 
@@ -75,14 +73,12 @@ class RingBuffer
 		return _avail;
 	}
 
-	private:
+private:
 	uint8_t _readfrom;
 	uint8_t _writeto;
 	uint8_t _avail;
 	uint8_t _bufferSize;
 	uint8_t _buf[size];
 };
-
-
 
 #endif /* RINGBUFFER_H_ */

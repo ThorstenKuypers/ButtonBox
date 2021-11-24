@@ -11,7 +11,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "../inc/RingBuffer.h"
+#include "../include/RingBuffer.h"
 
 #ifndef USART_H_
 #define USART_H_
@@ -25,37 +25,36 @@
 extern "C" void UDRE_vec() __asm__("__vector_12") __attribute__((signal, used));
 extern "C" void RXC_vec() __asm__("__vector_11") __attribute__((signal, used));
 
-class Usart {
-	
-	public:
-	
+class Usart
+{
+
+public:
 	Usart();
 	~Usart();
-		
+
 	void PutByte(uint8_t byte);
 	uint8_t GetByte();
-	
+
 	void Init();
-	
+
 	//////////////////////////////////////////////////////////////////////////
 	// write len bytes from buf to USART
-	void Write(uint8_t* buf, uint8_t len);
-	
+	void Write(uint8_t *buf, uint8_t len);
+
 	uint8_t Available();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read at max buflen bytes from USART to buf
 	// returns number of bytes read or -1 on error
-	uint8_t Read(uint8_t* buf, uint8_t buflen);
-	
+	uint8_t Read(uint8_t *buf, uint8_t buflen);
+
 	friend void UDRE_vec();
 	friend void RXC_vec();
 
-	private:
-
+private:
 	RingBuffer<USART_RX_BUFLEN> _rxBuf;
 	RingBuffer<USART_TX_BUFLEN> _txBuf;
-	
+
 	//uint8_t _rxBuf[USART_RX_BUFLEN];
 	//uint8_t _rxReadFrom;
 	//uint8_t _rxWriteTo;
@@ -65,10 +64,8 @@ class Usart {
 	//uint8_t _txReadFrom;
 	//uint8_t _txWriteTo;
 	//uint8_t _txAvailable;
-	
-	static Usart* _usart;
+
+	static Usart *_usart;
 };
-
-
 
 #endif /* USART_H_ */

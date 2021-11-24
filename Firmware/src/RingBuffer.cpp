@@ -5,4 +5,4 @@
 *  Author: iceri
 */
 
-#include "../inc/RingBuffer.h"
+#include "../include/RingBuffer.h"
