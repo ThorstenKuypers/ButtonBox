@@ -12,6 +12,7 @@
 
 #include "../include/Usart.h"
 #include "../include/commondefs.h"
+#include "../include/hal.h"
 
 int main(void)
 {
@@ -19,6 +20,8 @@ int main(void)
   usart.Init();
   uint8_t buf[] = {'A', 'B', 'C'};
 
+  HAL::Register<const PORTD> pd;
+  
   sei();
 
   while (1)

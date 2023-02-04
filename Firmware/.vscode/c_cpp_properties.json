@@ -1,0 +1,40 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "c:/Users/iceri/source/repos/ButtonBox/Firmware/include",
+                "c:/Users/iceri/source/repos/ButtonBox/Firmware/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "c:/Users/iceri/source/repos/ButtonBox/Firmware/include",
+                    "c:/Users/iceri/source/repos/ButtonBox/Firmware/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "F_CPU=16000000L",
+                "PLATFORMIO=60002",
+                "ARDUINO_AVR_ATmega8",
+                "__AVR_ATmega8__",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "C:/Users/iceri/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerArgs": [
+                "-mmcu=atmega8",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

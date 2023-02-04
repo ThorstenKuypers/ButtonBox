@@ -1,0 +1,16 @@
+(kicad_sch (version 20211123) (generator eeschema)
+
+  (uuid 5ca4be1c-537e-4a4a-b344-d0c8ffde8546)
+
+  (paper "A4")
+
+  (title_block
+    (title "Dashboard")
+    (date "23 mar 2014")
+    (rev "1")
+  )
+
+  (lib_symbols
+  )
+
+)

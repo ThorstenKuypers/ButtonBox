@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+.Firmware.old/Debug
+.Firmware.old/Release
+.Firmware.old/.settings
+Plan/ButtonBox-backups

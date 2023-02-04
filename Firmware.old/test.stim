@@ -1,0 +1,14 @@
+PIND &= 0b11111110 // Start Bit
+#69
+PIND &= 0b11111110
+#278               // 4 Bit Delays
+PIND |= 0b00000001
+#69
+PIND &= 0b11111110
+#69
+PIND |= 0b00000001
+#70
+PIND &= 0b11111110
+#69
+PIND |= 0b00000001 // Stop Bit
+#69
