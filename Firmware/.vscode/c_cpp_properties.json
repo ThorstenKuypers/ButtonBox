@@ -22,7 +22,7 @@
             },
             "defines": [
                 "F_CPU=16000000L",
-                "PLATFORMIO=60002",
+                "PLATFORMIO=60106",
                 "ARDUINO_AVR_ATmega8",
                 "__AVR_ATmega8__",
                 ""

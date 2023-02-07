@@ -1,0 +1,10 @@
+[[settings]]
+generateCpp = true
+
+[[applicationCollection]]
+usage = ['Generic Desktop', 'Gamepad']
+
+    [[applicationCollection.inputReport]]
+    [[applicationCollection.inputReport.variableItem]]
+    usageRange = ['Button', 'Button 1', 'Button 2']
+    logicalValueRange = [0, 1]

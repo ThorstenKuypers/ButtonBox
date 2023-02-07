@@ -1,0 +1,29 @@
+{
+    "C_Cpp.default.intelliSenseMode": "gcc-x86",
+    "AVR.reporter.arguments": [
+        "-C"
+    ],
+    "AVR.source.compiler": "c:\\msys64\\mingw32\\bin\\avr-gcc.exe",
+    "AVR.programmer.tool": "c:\\msys64\\mingw32\\bin\\avrdude.exe",
+    "AVR.programmer.definitions": "c:\\msys64\\mingw32\\bin\\avrdude.conf",
+    "AVR.source.libraries": [
+        "C:\\msys64\\mingw32\\avr\\include"
+    ],
+    "AVR.device.type": "atmega8u2",
+    "AVR.device.frequency": 16000000,
+    "AVR.programmer.type": "stk500",
+    "AVR.programmer.port": "COM3",
+    "AVR.compiler.C++ standard": "gnu++17",
+    "AVR.source.highlight": true,
+    "AVR.compiler.arguments": [
+        "-g",
+        "-Os",
+        "-Wall",
+        "-Wextra",
+        "-fpermissive",
+        "-fno-exceptions",
+        "-fno-threadsafe-statics",
+        "-pipe",
+        "--param=min-pagesize=0"
+    ]
+}

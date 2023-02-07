@@ -1,0 +1,25 @@
+Power On the USB interface
+• Configure PLL interface
+• Enable PLL
+• Check PLL lock
+• Enable USB interface
+• Configure USB interface (USB Endpoint 0 configuration)
+• Attach USB device
+
+Power Off the USB interface
+• Detach USB device
+• Disable USB interface
+• Disable PLL
+
+Suspending the USB interface
+• Clear Suspend Bit
+• Set USB suspend clock
+• Disable PLL
+• Be sure to have interrupts enabled (WAKEUPE) to exit sleep mode
+• Put the MCU in sleep mode
+
+Resuming the USB interface
+• Enable PLL
+• Wait PLL lock
+• Clear USB suspend clock
+• Clear Resume informatio
