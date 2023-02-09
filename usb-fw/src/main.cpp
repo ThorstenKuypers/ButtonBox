@@ -81,9 +81,13 @@ const uint8_t endpointDescriptor[7] = {
     8
 };
 
+volatile uint8_t cnt = 0;
+volatile uint8_t buttons = 0;
+volatile uint8_t btnUpdate = 0;
+volatile uint8_t usbState = 0;
+
 #define RX_LED PD4
 #define TX_LED PD5
-
 
 void WaitTx()
 {
@@ -124,14 +128,20 @@ ISR(USB_GEN_vect)
     }
 }
 
+#define SET_ADDRESS 5
+#define GET_DESCRIPTOR 6
+
 // Endpoint interrupt
 ISR(USB_COM_vect)
 {
     uint8_t stp[8] = {0};
+    // USB_Setup setup = {0};
+
+    if (UEINT & _BV(EPINT0))
+        UENUM = 0;
 
     if (UEINTX & (1 << RXSTPI)) // setup packet received
     {
-
         for (uint8_t i = 0; i < 8; i++)
         {
             stp[i] = UEDATX;
@@ -150,7 +160,6 @@ ISR(USB_COM_vect)
                 }
                 UEINTX = ~_BV(TXINI);
                 WaitTx();
-                PORTD &= ~_BV(RX_LED);
             }
             if (2 == stp[3])
             {
@@ -194,6 +203,9 @@ ISR(USB_COM_vect)
                 }
                 UEINTX = ~_BV(TXINI);
                 WaitTx();
+
+                PORTD &= ~_BV(RX_LED);
+                usbState = 2;
             }
         }
         else if (5 == stp[1]) // set address
@@ -208,13 +220,30 @@ ISR(USB_COM_vect)
             // set config
             UEINTX = ~_BV(TXINI);
             WaitTx();
+
+            // the device is now in the configured state; so setup additional endpoint(s)
+            UENUM = 1; // select EP1
+            UECFG0X = _BV(EPTYPE0) | _BV(EPTYPE1)|_BV(EPDIR);
+            UECFG1X = _BV(ALLOC);
+            UECONX = _BV(EPEN);
+            UEIENX = _BV(TXINE); // enable IN interrupt for EP1
+
+            UENUM = 0;
+            usbState = 1;
         }
         else if (0x0a == stp[1])
         {
+            // SET_IDLE 
+            // the device is configured and ready, but the host has not got
+            // the report descriptor. So it requests to hold any HID reports
+            // for now. Because it can't interpret them yet.
             UEINTX = ~_BV(TXINI);
             WaitTx();
         }
+
+        return;
     }
+    
 }
 
 int main(void)
@@ -235,8 +264,35 @@ int main(void)
     UDCON = 0; //&= ~(1<<DETACH); // attach device
     sei();
 
-    while(true)
+    while (true)
     {
-        _delay_ms(1);
+        if (usbState == 2)
+        {
+            // send back HID report
+            if (btnUpdate)
+            {
+                PORTD ^= _BV(TX_LED);
+                WaitTx();
+                UENUM = 1;
+                UEDATX = 0x01; // report ID
+                UEDATX = buttons;
+                UEINTX &= ~(_BV(TXINI) | _BV(FIFOCON));
+                WaitTx();
+                // button state changed?
+                // clear tx and fifocon bits
+                btnUpdate = 0;
+            }
+        }
+
+        if (250 == cnt)
+        {
+            cnt = 0;
+            btnUpdate = 1;
+            buttons ^= _BV(0);
+        }
+
+        cnt++;
+
+        _delay_ms(2);
     }
- }
+}
