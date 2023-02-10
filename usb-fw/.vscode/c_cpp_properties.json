@@ -20,7 +20,7 @@
                 "-pipe",
                 "--param=min-pagesize=0",
                 "-mmcu=atmega8u2",
-                "-DF_CPU=16000000UL"
+                "-F_CPU=16000000UL"
             ]
         }
     ],
