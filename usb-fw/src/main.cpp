@@ -7,7 +7,8 @@
 #include "../inc/ReportDesc.h"
 #include "../inc/Usart.h"
 #include "../inc/RingBuffer.h"
-#include "../inc/hal.h"
+// #include "../inc/hal.h"
+#include "../inc/timer.h"
 
 #ifndef F_CPU
 #error "F_CPU not set!"
@@ -130,7 +131,7 @@ int main(void)
     initEp0();
     UDCON = 0; // attach device
     
-    hal::Timer1 timer1{_BV(CS10) | _BV(CS11) | _BV(WGM12), 250 - 1, _BV(OCIE1A)};
+    timer::Timer1 timer1{_BV(CS10) | _BV(CS11) | _BV(WGM12), 250 - 1, _BV(OCIE1A)};
     
     sei();
 

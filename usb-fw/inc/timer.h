@@ -4,15 +4,33 @@
 
 namespace timer
 {
-
-    class MillisTimer
+   
+    class Timer1
     {
-        friend hal::timer1Interrupt;
-
-        uint16_t _millis;
+        friend class hal::timer1CompA;
+        volatile uint32_t _cnt;
+        hal::timer1CompA tca;
 
     public:
-        MillisTimer(void);
-        uint16_t Count() { return _millis; }
+        Timer1(uint8_t tccr1b, uint16_t ocr1a, uint8_t timsk);
+
+        uint32_t GetCount()
+        {
+            uint32_t c = 0;
+            ATOMIC_BLOCK(ATOMIC_FORCEON)
+            {
+                c = _cnt;
+            }
+
+            return c;
+        }
+
+        void Reset()
+        {
+            ATOMIC_BLOCK(ATOMIC_FORCEON)
+            {
+                _cnt = 0;
+            }
+        }
     };
 }
