@@ -39,7 +39,8 @@ void Usart::PutByte(uint8_t byte)
 
 uint8_t Usart::GetByte()
 {
-	return 0;
+	uint8_t b = _rxBuf.GetByte();
+	return b;
 }
 
 void Usart::Write(uint8_t *buf, uint8_t len)

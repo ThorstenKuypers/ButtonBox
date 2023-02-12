@@ -133,8 +133,8 @@ int main(void)
     usart::Usart usart1;
     usart1.Init();
     
-    DDRD |= _BV(RX_LED) | _BV(TX_LED);  // RX/TX led pins as output
-    PORTD |= _BV(RX_LED) | _BV(TX_LED); // ports high = LEDs off (LEDs are pulled up to 5V)
+    DDRD = _BV(RX_LED);// | _BV(TX_LED);  // RX/TX led pins as output
+    PORTD = _BV(RX_LED);// | _BV(TX_LED); // ports high = LEDs off (LEDs are pulled up to 5V)
 
     sei();
 
@@ -143,18 +143,19 @@ int main(void)
 
         if (usart1.Available() > 0)
         {
-            PORTD ^= _BV(RX_LED);
-
             //uint8_t len = usart1.Available();
-            uint8_t buf[8] = {0};
-            usart1.Read(buf, 8);
+            // uint8_t buf[8] = {0};
+            // usart1.Read(buf, 8);
+            uint8_t b = usart1.GetByte();
+            buttons = b;
+            btnUpdate = 1;
         }
 
         if ((timer1.GetCount() - millis) >= 1000)
         {
             millis = timer1.GetCount();
-            buttons ^= _BV(0);
-            btnUpdate = 1;
+            // buttons ^= _BV(0);
+            // btnUpdate = 1;
         }
 
         if (usbState == 2)
@@ -168,10 +169,8 @@ int main(void)
                 UEINTX &= ~(_BV(TXINI) | _BV(FIFOCON));
                 WaitTx();
                 btnUpdate = 0;
-                //PORTD &= ~_BV(TX_LED);            
+                PORTD ^= _BV(RX_LED);            
             }
-            //else
-                //PORTD |= _BV(TX_LED);
         }
     }
 }
