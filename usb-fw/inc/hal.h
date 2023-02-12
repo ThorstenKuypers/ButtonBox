@@ -12,6 +12,11 @@ namespace timer
     class Timer1;
 }
 
+namespace usart
+{
+    class Usart;
+}
+
 namespace hal
 {
 
@@ -25,4 +30,13 @@ namespace hal
         virtual void isr(void) override;
     };
 
+    class usartRx : interrupt
+    {
+        usart::Usart* _owner;
+
+        public:
+        usartRx();
+        void setOwner(usart::Usart* p);
+        virtual void isr(void) override;
+    };
 }

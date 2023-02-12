@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/wdt.h>
+#include <avr/pgmspace.h>
 
 #include "../inc/ReportDesc.h"
 #include "../inc/Usart.h"
@@ -27,7 +28,7 @@ struct USB_Setup
 // TODO: configure and enable EP1 for sending
 //       HID reports
 
-const uint8_t devDesc[18] = {
+const uint8_t PROGMEM devDesc[18] = {
     18,
     1,
     0x00, 0x02,
@@ -43,7 +44,7 @@ const uint8_t devDesc[18] = {
     0,
     1};
 
-const uint8_t configDescriptor[9] = {
+const uint8_t PROGMEM configDescriptor[9] = {
     9, // bLength
     2, // bDescriptorType
     34, 00,
@@ -53,7 +54,7 @@ const uint8_t configDescriptor[9] = {
     0x80,
     200};
 
-const uint8_t interfaceDescriptor[9] = {
+const uint8_t PROGMEM interfaceDescriptor[9] = {
     9,
     4,
     0,
@@ -64,7 +65,7 @@ const uint8_t interfaceDescriptor[9] = {
     0,
     0};
 
-const uint8_t hidDescriptor[9] = {
+const uint8_t PROGMEM hidDescriptor[9] = {
     9,    // bLength
     0x21, // HID descriptor
     0x10, 0x01,
@@ -74,7 +75,7 @@ const uint8_t hidDescriptor[9] = {
     sizeof(hidReportDescriptor), 0 // report descriptor length
 };
 
-const uint8_t endpointDescriptor[7] = {
+const uint8_t PROGMEM endpointDescriptor[7] = {
     7,
     5,
     0b10000001,
@@ -116,9 +117,6 @@ void initEp0()
 
 int main(void)
 {
-    DDRD = _BV(RX_LED) | _BV(TX_LED);  // RX/TX led pins as output
-    PORTD = _BV(RX_LED) | _BV(TX_LED); // ports high = LEDs off (LEDs are pulled up to 5V)
-
     cli();
     USBCON = _BV(USBE) | _BV(FRZCLK);
     // config PLL interface
@@ -132,21 +130,37 @@ int main(void)
     UDCON = 0; // attach device
     
     timer::Timer1 timer1{_BV(CS10) | _BV(CS11) | _BV(WGM12), 250 - 1, _BV(OCIE1A)};
+    usart::Usart usart1;
+    usart1.Init();
     
+    DDRD |= _BV(RX_LED) | _BV(TX_LED);  // RX/TX led pins as output
+    PORTD |= _BV(RX_LED) | _BV(TX_LED); // ports high = LEDs off (LEDs are pulled up to 5V)
+
     sei();
 
     while (true)
     {
+
+        if (usart1.Available() > 0)
+        {
+            PORTD ^= _BV(RX_LED);
+
+            //uint8_t len = usart1.Available();
+            uint8_t buf[8] = {0};
+            usart1.Read(buf, 8);
+        }
+
         if ((timer1.GetCount() - millis) >= 1000)
         {
             millis = timer1.GetCount();
-            PORTD ^= _BV(TX_LED);            
+            buttons ^= _BV(0);
+            btnUpdate = 1;
         }
 
         if (usbState == 2)
         {
             // send back HID report
-            if (btnUpdate != 0)
+            if (btnUpdate)
             {
                 UENUM = 1;
                 UEDATX = 0x01; // report ID
@@ -154,7 +168,10 @@ int main(void)
                 UEINTX &= ~(_BV(TXINI) | _BV(FIFOCON));
                 WaitTx();
                 btnUpdate = 0;
+                //PORTD &= ~_BV(TX_LED);            
             }
+            //else
+                //PORTD |= _BV(TX_LED);
         }
     }
 }
@@ -204,7 +221,7 @@ ISR(USB_COM_vect)
             {
                 for (uint8_t i = 0; i < 18; i++)
                 {
-                    UEDATX = devDesc[i];
+                    UEDATX = pgm_read_byte(&devDesc[i]);
                 }
                 UEINTX &= ~_BV(TXINI);
                 //WaitTx();
@@ -215,21 +232,21 @@ ISR(USB_COM_vect)
                 // config desc
                 for (uint8_t i = 0; i < sizeof(configDescriptor); i++)
                 {
-                    UEDATX = configDescriptor[i];
+                    UEDATX = pgm_read_byte(&configDescriptor[i]);
                 }
                 if (wLength == 34)
                 {
                     for (uint8_t i = 0; i < sizeof(interfaceDescriptor); i++)
                     {
-                        UEDATX = interfaceDescriptor[i];
+                        UEDATX = pgm_read_byte(&interfaceDescriptor[i]);
                     }
                     for (uint8_t i = 0; i < sizeof(hidDescriptor); i++)
                     {
-                        UEDATX = hidDescriptor[i];
+                        UEDATX = pgm_read_byte(&hidDescriptor[i]);
                     }
                     for (uint8_t i = 0; i < sizeof(endpointDescriptor); i++)
                     {
-                        UEDATX = endpointDescriptor[i];
+                        UEDATX = pgm_read_byte(&endpointDescriptor[i]);
                     }
                 }
                 UEINTX &= ~_BV(TXINI);
@@ -240,7 +257,7 @@ ISR(USB_COM_vect)
             {
                 for (uint8_t i = 0; i < sizeof(interfaceDescriptor); i++)
                 {
-                    UEDATX = interfaceDescriptor[i];
+                    UEDATX = pgm_read_byte(&interfaceDescriptor[i]);
                 }
                 UEINTX &= ~_BV(TXINI);
                 return;
@@ -250,7 +267,7 @@ ISR(USB_COM_vect)
                 // get HID descriptor
                 for (uint8_t i = 0; i < sizeof(hidReportDescriptor); i++)
                 {
-                    UEDATX = hidReportDescriptor[i];
+                    UEDATX = pgm_read_byte(&hidReportDescriptor[i]);
                 }
                 UEINTX &= ~_BV(TXINI);
                 usbState = 2;

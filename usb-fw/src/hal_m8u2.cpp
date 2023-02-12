@@ -12,6 +12,12 @@ void interrupt::Register(int num, interrupt* intPtr)
 
 void interrupt::timer1CompA()
 {
-    if (isrVectorTable[0] != nullptr)
-        isrVectorTable[0]->isr();
+    if (isrVectorTable[TIMER1_COMPA_VEC] != nullptr)
+        isrVectorTable[TIMER1_COMPA_VEC]->isr();
+}
+
+void interrupt::usartRx()
+{
+    if (isrVectorTable[USART1_RX_VEC] != nullptr)
+        isrVectorTable[USART1_RX_VEC]->isr();
 }

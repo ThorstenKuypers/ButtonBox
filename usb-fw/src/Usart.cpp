@@ -1,25 +1,17 @@
 /*
-* Usart.cpp
-*
-* Created: 4/10/2021 12:50:26 AM
-*  Author: iceri
-*/
+ * Usart.cpp
+ *
+ * Created: 4/10/2021 12:50:26 AM
+ *  Author: iceri
+ */
 
 #include "../inc/Usart.h"
 
-
-Usart *Usart::_usart;
+using namespace usart;
 
 Usart::Usart()
-//_rxReadFrom(0),
-//_rxWriteTo(0),
-//_rxAvailable(0),
-//_txReadFrom(0),
-//_txWriteTo(0),
-//_txAvailable(0)
 {
-	Usart::_usart = this;
-	//_rxBuf = RingBuffer(USART_RX_BUFLEN);
+	usartRx.setOwner(this);
 }
 
 Usart::~Usart()
@@ -28,6 +20,7 @@ Usart::~Usart()
 
 void Usart::Init()
 {
+
 	// set the baud-rate according to table 60 in datasheet
 	// 12 = 76.8k @ 16.000 MHz
 	UBRR1H = UBRRH_VALUE;
@@ -41,11 +34,6 @@ void Usart::Init()
 
 void Usart::PutByte(uint8_t byte)
 {
-	//_txBuf[_txWriteTo]=byte;
-	//_txWriteTo++;
-	//_txWriteTo &=USART_TX_MAX;
-	//
-	//_txAvailable++;
 	_txBuf.PutByte(byte);
 }
 
@@ -68,7 +56,17 @@ void Usart::Write(uint8_t *buf, uint8_t len)
 
 uint8_t Usart::Read(uint8_t *buf, uint8_t buflen)
 {
-	return 0;
+	auto len = _rxBuf.Available();
+	if (len > buflen)
+		len = buflen;
+
+	while (len--)
+	{
+		*buf = _rxBuf.GetByte();
+		buf++;
+	}
+
+	return buflen;
 }
 
 uint8_t Usart::Available()
@@ -76,15 +74,15 @@ uint8_t Usart::Available()
 	return _rxBuf.Available();
 }
 
-ISR(USART1_UDRE_vect)
-{
+// ISR(USART1_UDRE_vect)
+// {
 
-}
+// }
 
-ISR(USART1_RX_vect)
-{
+// ISR(USART1_RX_vect)
+// {
 
-}
+// }
 
 // // USART Data register empty interrupt handler
 // void UDRE_vec()
