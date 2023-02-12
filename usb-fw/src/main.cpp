@@ -1,16 +1,17 @@
 
-// #define F_CPU 16000000UL
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/wdt.h>
 
-#include "ReportDesc.h"
+#include "../inc/ReportDesc.h"
+#include "../inc/Usart.h"
+#include "../inc/RingBuffer.h"
+#include "../inc/hal.h"
 
-// #ifndef F_CPU
-// #error "F_CPU not set!"
-// #endif
+#ifndef F_CPU
+#error "F_CPU not set!"
+#endif
 
 struct USB_Setup
 {
@@ -84,7 +85,7 @@ volatile uint8_t cnt = 0;
 volatile uint8_t buttons = 0;
 volatile uint8_t btnUpdate = 0;
 volatile uint8_t usbState = 0;
-volatile uint16_t millis = 0;
+volatile uint32_t millis = 0;
 
 #define RX_LED PD4
 #define TX_LED PD5
@@ -127,17 +128,20 @@ int main(void)
     // enable USB controller and unfreeze clock
     USBCON = 0x80; // (1<<USBE)
     initEp0();
-    UDCON = 0; //&= ~(1<<DETACH); // attach device
-    // timer1
-    // TCCR0A = _BV(WGM01);
-    TCCR1B = _BV(CS10) | _BV(CS11) | _BV(WGM12);
-    OCR1A = 250 - 1;
-    TIMSK1 = _BV(OCIE1A);
-
+    UDCON = 0; // attach device
+    
+    hal::Timer1 timer1{_BV(CS10) | _BV(CS11) | _BV(WGM12), 250 - 1, _BV(OCIE1A)};
+    
     sei();
 
     while (true)
     {
+        if ((timer1.GetCount() - millis) >= 1000)
+        {
+            millis = timer1.GetCount();
+            PORTD ^= _BV(TX_LED);            
+        }
+
         if (usbState == 2)
         {
             // send back HID report
@@ -154,19 +158,6 @@ int main(void)
     }
 }
 
-ISR(TIMER1_COMPA_vect)
-{
-    if (1000 == millis)
-    {
-        millis = 0;
-        btnUpdate = 1;
-        buttons ^= _BV(0);
-        PORTD ^= _BV(TX_LED);
-    }
-    else
-        millis++;
-}
-
 // Generic USB interrupt
 ISR(USB_GEN_vect)
 {
@@ -177,9 +168,6 @@ ISR(USB_GEN_vect)
         // end-of-reset
         initEp0();
         UDINT &= ~(1 << EORSTI);
-        TCNT1 = 0;
-        // TIMSK1 |= _BV(OCIE1A);
-        // MCUSR &= ~_BV(USBRF);
 
         return;
     }
@@ -187,14 +175,6 @@ ISR(USB_GEN_vect)
     if (udint & _BV(SOFI)) // start of frame sequence found; happens every 1ms
     {
         UDINT &= ~(1 << SOFI);
-        // if (1000 == millis)
-        // {
-        //     millis = 0;
-        //     btnUpdate = 1;
-        //     buttons ^= _BV(0);
-        //     PORTD ^= _BV(RX_LED);
-        // }
-        // millis++;
         return;
     }
 }
@@ -203,7 +183,6 @@ ISR(USB_GEN_vect)
 ISR(USB_COM_vect)
 {
     uint8_t stp[8] = {0};
-    // USB_Setup setup = {0};
 
     if (UEINT & _BV(EPINT0))
         UENUM = 0;

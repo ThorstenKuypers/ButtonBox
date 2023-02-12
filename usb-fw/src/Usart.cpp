@@ -5,8 +5,8 @@
 *  Author: iceri
 */
 
-#include "../include/Usart.h"
-#include "../include/hal.h"
+#include "../inc/Usart.h"
+
 
 Usart *Usart::_usart;
 
@@ -30,13 +30,13 @@ void Usart::Init()
 {
 	// set the baud-rate according to table 60 in datasheet
 	// 12 = 76.8k @ 16.000 MHz
-	UBRRH = 0;
-	UBRRL = 51;
+	UBRR1H = UBRRH_VALUE;
+	UBRR1L = UBRRL_VALUE;
 
 	// frame format: 8N1
-	UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);
+	UCSR1C = _BV(UMSEL10) | _BV(UCSZ11) | _BV(UCSZ10);
 	// enable receiver/transmitter - interrupt driven
-	UCSRB = _BV(RXCIE) | _BV(RXEN) | _BV(TXEN) | _BV(TXCIE);
+	UCSR1B = _BV(RXCIE1) | _BV(RXEN1) | _BV(TXEN1);
 }
 
 void Usart::PutByte(uint8_t byte)
@@ -63,7 +63,7 @@ void Usart::Write(uint8_t *buf, uint8_t len)
 		c--;
 	}
 
-	UCSRB |= _BV(UDRIE);
+	UCSR1B |= _BV(UDRIE1);
 }
 
 uint8_t Usart::Read(uint8_t *buf, uint8_t buflen)
@@ -76,32 +76,42 @@ uint8_t Usart::Available()
 	return _rxBuf.Available();
 }
 
-// USART Data register empty interrupt handler
-void UDRE_vec()
+ISR(USART1_UDRE_vect)
 {
-	Usart *u = Usart::_usart;
 
-	if (u->_txBuf.Available() == 0)
-	{
-		// no more bytes in TX-buffer, so disable UDRE interrupt
-		UCSRB &= ~_BV(UDRIE);
-
-		// clear UDRE flag, to stop further interrupts
-		UCSRA = _BV(UDRE);
-	}
-	else
-	{
-		// get byte from TX-buffer and send it down the line
-		uint8_t b = u->_txBuf.GetByte();
-		UDR = b;
-	}
 }
 
-// USART Data received interrupt handler
-void RXC_vec()
+ISR(USART1_RX_vect)
 {
-	Usart *u = Usart::_usart;
 
-	byte_t b = UDR;
-	u->_rxBuf.PutByte(b);
 }
+
+// // USART Data register empty interrupt handler
+// void UDRE_vec()
+// {
+// 	Usart *u = Usart::_usart;
+
+// 	if (u->_txBuf.Available() == 0)
+// 	{
+// 		// no more bytes in TX-buffer, so disable UDRE interrupt
+// 		UCSRB &= ~_BV(UDRIE);
+
+// 		// clear UDRE flag, to stop further interrupts
+// 		UCSRA = _BV(UDRE);
+// 	}
+// 	else
+// 	{
+// 		// get byte from TX-buffer and send it down the line
+// 		uint8_t b = u->_txBuf.GetByte();
+// 		UDR = b;
+// 	}
+// }
+
+// // USART Data received interrupt handler
+// void RXC_vec()
+// {
+// 	Usart *u = Usart::_usart;
+
+// 	byte_t b = UDR;
+// 	u->_rxBuf.PutByte(b);
+// }

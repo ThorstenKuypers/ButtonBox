@@ -5,13 +5,15 @@
 *  Author: iceri
 */
 
-#include <stdlib.h>
-#include <inttypes.h>
+// #include <stdlib.h>
+// #include <inttypes.h>
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#define BAUD 38400
+#include <util/setbaud.h>
 
-#include "../include/RingBuffer.h"
+#include "RingBuffer.h"
 
 #ifndef USART_H_
 #define USART_H_
@@ -22,8 +24,10 @@
 #define USART_RX_MAX USART_RX_BUFLEN - 1
 #define USART_TX_MAX USART_TX_BUFLEN - 1
 
-extern "C" void UDRE_vec() __asm__("__vector_12") __attribute__((signal, used));
-extern "C" void RXC_vec() __asm__("__vector_11") __attribute__((signal, used));
+// extern "C" void UDRE_vec() __asm__("__vector_12") __attribute__((signal, used));
+// extern "C" void RXC_vec() __asm__("__vector_11") __attribute__((signal, used));
+
+#define CPPISR(vector) __asm__(vector);
 
 class Usart
 {
@@ -48,9 +52,6 @@ public:
 	// returns number of bytes read or -1 on error
 	uint8_t Read(uint8_t *buf, uint8_t buflen);
 
-	friend void UDRE_vec();
-	friend void RXC_vec();
-
 private:
 	RingBuffer<USART_RX_BUFLEN> _rxBuf;
 	RingBuffer<USART_TX_BUFLEN> _txBuf;
@@ -64,6 +65,7 @@ private:
 	//uint8_t _txReadFrom;
 	//uint8_t _txWriteTo;
 	//uint8_t _txAvailable;
+//static void ed() __asm__("__vector_23") __attribute__((__signal__, __used__)){}
 
 	static Usart *_usart;
 };

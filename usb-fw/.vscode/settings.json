@@ -8,6 +8,7 @@
     "AVR.programmer.definitions": "c:\\msys64\\mingw32\\bin\\avrdude.conf",
     "AVR.source.libraries": [
         "C:\\msys64\\mingw32\\avr\\include"
+        //"${workspaceFolder}\\inc"
     ],
     "AVR.device.type": "atmega8u2",
     "AVR.device.frequency": 16000000,
