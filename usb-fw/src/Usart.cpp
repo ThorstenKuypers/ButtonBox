@@ -27,7 +27,7 @@ void Usart::Init()
 	UBRR1L = UBRRL_VALUE;
 
 	// frame format: 8N1
-	UCSR1C = _BV(UMSEL10) | _BV(UCSZ11) | _BV(UCSZ10);
+	UCSR1C = /*_BV(UMSEL10) |*/ _BV(UCSZ11) | _BV(UCSZ10);
 	// enable receiver/transmitter - interrupt driven
 	UCSR1B = _BV(RXCIE1) | _BV(RXEN1) | _BV(TXEN1);
 }
