@@ -1,0 +1,6 @@
+USBDeviceController (USB-driver): Handles the access to the hardware and the registers. It also provides 
+				  endpoints which function as input/outbut buffers for the device. Data written
+to IN endpoints is sent to the host, data received from the host is put into OUT endpoints and can be read
+from the USB device.
+
+USBDevice: Represents the device itself. It consists of interfaces that represent functional units (functions) of a device.
