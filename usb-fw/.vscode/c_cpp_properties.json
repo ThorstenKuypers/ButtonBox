@@ -5,7 +5,7 @@
             "intelliSenseMode": "${default}",
             "compilerPath": "c:\\msys64\\mingw32\\bin\\avr-gcc.exe",
             "cStandard": "${default}",
-            "cppStandard": "gnu++17",
+            "cppStandard": "C++17",
             "includePath": [
                 "C:\\msys64\\mingw32\\avr\\include\\**"
             ],
