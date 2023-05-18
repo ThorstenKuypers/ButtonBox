@@ -14,7 +14,7 @@
     "AVR.device.frequency": 16000000,
     "AVR.programmer.type": "stk500",
     "AVR.programmer.port": "COM3",
-    "AVR.compiler.C++ standard": "C++17",
+    "AVR.compiler.C++ standard": "c++17",
     "AVR.source.highlight": true,
     "AVR.compiler.arguments": [
         "-g",
