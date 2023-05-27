@@ -5,8 +5,6 @@
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
 
-#include "../inc/Usart.h"
-#include "../inc/RingBuffer.h"
 // #include "../inc/hal.h"
 #include "../inc/timer.h"
 
@@ -33,8 +31,6 @@ struct USB_Setup
 
 
 volatile uint8_t cnt = 0;
-volatile uint8_t buttons = 0;
-volatile uint8_t btnUpdate = 0;
 volatile uint32_t millis = 0;
 
 #define RX_LED PD4
@@ -57,8 +53,6 @@ int main(void)
     UDCON = 0; // attach device
     
     timer::Timer1 timer1{_BV(CS10) | _BV(CS11) | _BV(WGM12), 250 - 1, _BV(OCIE1A)};
-    usart::Usart usart1;
-    usart1.Init();
     
     DDRD = _BV(RX_LED);// | _BV(TX_LED);  // RX/TX led pins as output
     PORTD = _BV(RX_LED);// | _BV(TX_LED); // ports high = LEDs off (LEDs are pulled up to 5V)
@@ -67,16 +61,7 @@ int main(void)
 
     while (true)
     {
-
-        if (usart1.Available() > 0)
-        {
-            //uint8_t len = usart1.Available();
-            // uint8_t buf[8] = {0};
-            // usart1.Read(buf, 8);
-            uint8_t b = usart1.GetByte();
-            buttons = b;
-            btnUpdate = 1;
-        }
+        UpdateButtons();
 
         if ((timer1.GetCount() - millis) >= 1000)
         {
@@ -85,21 +70,7 @@ int main(void)
             // btnUpdate = 1;
         }
 
-        if (getUsbState() == 2)
-        {
-            // send back HID report
-            if (btnUpdate)
-            {
-                UENUM = 1;
-                UEDATX = 0x01; // report ID
-                UEDATX = buttons;
-                UEINTX &= ~(_BV(TXINI) | _BV(FIFOCON));
-                WaitTx();
-                btnUpdate = 0;
-                PORTD ^= _BV(RX_LED);            
-            }
-        }
-    }
+     }
 }
 
 

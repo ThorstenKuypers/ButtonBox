@@ -12,6 +12,7 @@ using namespace usart;
 Usart::Usart()
 {
 	usartRx.setOwner(this);
+	Init();
 }
 
 Usart::~Usart()

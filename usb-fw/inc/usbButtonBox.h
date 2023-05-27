@@ -3,6 +3,8 @@
 #include <avr/io.h>
 
 #include "ReportDesc.h"
+#include "Usart.h"
+#include "RingBuffer.h"
 
 constexpr uint8_t numEndpoints = 2;
 
@@ -42,3 +44,6 @@ const uint8_t PROGMEM in_endpoint_escriptor[7] = {
     0b00000011,
     8, 0,
     8};
+
+
+void UpdateButtons();
