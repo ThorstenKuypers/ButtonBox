@@ -1,4 +1,0 @@
-init TWI 
-init Serial
-init Firmata
-init Button read timer (20ms)
