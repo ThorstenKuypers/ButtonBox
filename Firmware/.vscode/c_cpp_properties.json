@@ -23,15 +23,15 @@
             "defines": [
                 "F_CPU=16000000L",
                 "PLATFORMIO=60107",
-                "ARDUINO_AVR_ATmega8",
-                "__AVR_ATmega8__",
+                "ARDUINO_AVR_ATmega328P",
+                "__AVR_ATmega328P__",
                 ""
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
             "compilerPath": "C:/Users/iceri/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
             "compilerArgs": [
-                "-mmcu=atmega8",
+                "-mmcu=atmega328p",
                 ""
             ]
         }

@@ -1,12 +1,12 @@
 /*
-* RingBuffer.h
-*
-* Created: 4/10/2021 10:55:06 PM
-*  Author: iceri
-*/
+ * RingBuffer.h
+ *
+ * Created: 4/10/2021 10:55:06 PM
+ *  Author: iceri
+ */
 //////////////////////////////////////////////////////////////////////////
 /* RingBuffer - This class implements a circular buffer array. This buffer
-* fill up to its maximum capacity and than rolls over to the beginning. */
+ * fill up to its maximum capacity and than rolls over to the beginning. */
 
 #ifndef RINGBUFFER_H_
 #define RINGBUFFER_H_
@@ -27,27 +27,47 @@ public:
 	{
 	}
 
-	RingBuffer(const RingBuffer &b)
+	~RingBuffer() =default;
+	RingBuffer(RingBuffer &) = delete;
+	RingBuffer &operator=(RingBuffer &) = delete;
+
+	RingBuffer(const RingBuffer &&b)
 	{
 		_avail = b._avail;
+		b._avail = 0;
+
 		_bufferSize = b._bufferSize;
+		b._bufferSize = 0;
+
 		_buf = b._buf;
+		b._buf = nullptr;
+
 		_writeto = b._writeto;
+		b._writeto = 0;
+
 		_readfrom = b._readfrom;
+		b._readfrom = 0;
 	}
 
 	RingBuffer &operator=(const RingBuffer &&b)
 	{
 		_avail = b._avail;
-		_buf = b._buf;
+		b._avail = 0;
+
 		_bufferSize = b._bufferSize;
-		_readfrom = b._readfrom;
+		b._bufferSize = 0;
+
+		_buf = b._buf;
+		b._buf = nullptr;
+
 		_writeto = b._writeto;
+		b._writeto = 0;
+
+		_readfrom = b._readfrom;
+		b._readfrom = 0;
 
 		return *this;
 	}
-
-	~RingBuffer() {}
 
 	void PutByte(uint8_t byte)
 	{

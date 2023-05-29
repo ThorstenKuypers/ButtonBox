@@ -1,107 +1,106 @@
 /*
-* Usart.cpp
-*
-* Created: 4/10/2021 12:50:26 AM
-*  Author: iceri
-*/
+ * Usart.cpp
+ *
+ * Created: 4/10/2021 12:50:26 AM
+ *  Author: iceri
+ */
 
 #include "../include/Usart.h"
-#include "../include/hal.h"
+// #include "../include/hal.h"
 
-Usart *Usart::_usart;
+using usart0 = Usart<usart0_traits>;
 
-Usart::Usart()
-//_rxReadFrom(0),
-//_rxWriteTo(0),
-//_rxAvailable(0),
-//_txReadFrom(0),
-//_txWriteTo(0),
-//_txAvailable(0)
+template <>
+usart0 *usart0::_usart = 0;
+
+template <>
+Usart<usart0_traits>::Usart() : _rxBuf(),
+								_txBuf(),
+								UCSRA0(*reinterpret_cast<uint8_t *>(usart0_traits::UCSRA0)),
+								UCSRB0(*reinterpret_cast<uint8_t *>(usart0_traits::UCSRB0)),
+								UCSRC0(*reinterpret_cast<uint8_t *>(usart0_traits::UCSRB0)),
+								UBRRH0(*reinterpret_cast<uint8_t *>(usart0_traits::UBRRH0)),
+								UBRRL0(*reinterpret_cast<uint8_t *>(usart0_traits::UBRRL0)),
+								UDR00(*reinterpret_cast<uint8_t *>(usart0_traits::UDR00))
 {
-	Usart::_usart = this;
-	//_rxBuf = RingBuffer(USART_RX_BUFLEN);
+	usart0::_usart = this;
 }
 
-Usart::~Usart()
-{
-}
-
-void Usart::Init()
+template <>
+void Usart<usart0_traits>::Init()
 {
 	// set the baud-rate according to table 60 in datasheet
 	// 12 = 76.8k @ 16.000 MHz
-	UBRRH = 0;
-	UBRRL = 51;
+	UBRRH0 = 0;
+	UBRRL0 = 51;
 
 	// frame format: 8N1
-	UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);
+	UCSRC0 = _BV(UCSZ1) | _BV(UCSZ0);
 	// enable receiver/transmitter - interrupt driven
-	UCSRB = _BV(RXCIE) | _BV(RXEN) | _BV(TXEN) | _BV(TXCIE);
+	UCSRB0 = _BV(RXCIE) | _BV(RXEN) | _BV(TXEN) | _BV(TXCIE);
 }
 
-void Usart::PutByte(uint8_t byte)
+template <>
+void Usart<usart0_traits>::PutByte(uint8_t byte)
 {
-	//_txBuf[_txWriteTo]=byte;
-	//_txWriteTo++;
-	//_txWriteTo &=USART_TX_MAX;
-	//
-	//_txAvailable++;
 	_txBuf.PutByte(byte);
 }
 
-uint8_t Usart::GetByte()
+template <>
+uint8_t Usart<usart0_traits>::GetByte()
 {
 	return 0;
 }
 
-void Usart::Write(uint8_t *buf, uint8_t len)
+template <>
+void Usart<usart0_traits>::Write(uint8_t *buf, uint8_t len)
 {
-	uint8_t c = len;
-	while (c > 0)
+	for (uint8_t i = 0; i < len; i++)
 	{
-		_txBuf.PutByte(*buf++);
-		c--;
+		_txBuf.PutByte(buf[i]);
 	}
 
-	UCSRB |= _BV(UDRIE);
+	UCSRB0 |= _BV(UDRIE);
 }
 
-uint8_t Usart::Read(uint8_t *buf, uint8_t buflen)
+template <>
+uint8_t Usart<usart0_traits>::Read(uint8_t *buf, uint8_t buflen)
 {
 	return 0;
 }
 
-uint8_t Usart::Available()
+template <>
+uint8_t Usart<usart0_traits>::Available()
 {
 	return _rxBuf.Available();
 }
 
 // USART Data register empty interrupt handler
-void UDRE_vec()
+ISR(USART_UDRE_vect)
 {
-	Usart *u = Usart::_usart;
+	usart0 *u = usart0::_usart;
 
 	if (u->_txBuf.Available() == 0)
 	{
 		// no more bytes in TX-buffer, so disable UDRE interrupt
-		UCSRB &= ~_BV(UDRIE);
+		u->UCSRB0 &= ~_BV(UDRIE);
 
 		// clear UDRE flag, to stop further interrupts
-		UCSRA = _BV(UDRE);
+		u->UCSRA0 = _BV(UDRE);
 	}
 	else
 	{
 		// get byte from TX-buffer and send it down the line
 		uint8_t b = u->_txBuf.GetByte();
-		UDR = b;
+		u->UDR00 = b;
 	}
 }
 
 // USART Data received interrupt handler
-void RXC_vec()
+ISR(USART_RX_vect)
 {
-	Usart *u = Usart::_usart;
+	usart0 *u = usart0::_usart;
 
-	byte_t b = UDR;
+	uint8_t b = u->UDR00;
 	u->_rxBuf.PutByte(b);
 }

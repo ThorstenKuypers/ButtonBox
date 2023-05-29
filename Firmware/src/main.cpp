@@ -13,19 +13,27 @@
 #include "../include/Usart.h"
 #include "../include/commondefs.h"
 #include "../include/hal.h"
+#include "../include/twi.h"
 
 int main(void)
 {
-  Usart usart{};
+  Usart<usart0_traits> usart{};
   usart.Init();
-  uint8_t buf[] = {'A', 'B', 'C'};
+  uint8_t buf[] = {'A', 'B', 'C', '\n'};
 
-  HAL::Register<const PORTD> pd;
-  
+  //auto& twi = TwoWire<twi_traits>::Instance();
+
   sei();
+
+  uint8_t b = 0;
 
   while (1)
   {
-    usart.Write(buf, 3);
+    usart.Write(buf, 4);
+
+    //twi.ReadFromDevice(0x20, &b, 1);
+    //usart.Write(&b, 1);
   }
+
+  return 0;
 }
