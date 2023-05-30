@@ -23,7 +23,8 @@ public:
 	RingBuffer() : _readfrom(0),
 				   _writeto(0),
 				   _avail(0),
-				   _bufferSize(size)
+				   _bufferSize(size),
+				   _buf{0}
 	{
 	}
 

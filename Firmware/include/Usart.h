@@ -39,14 +39,22 @@
 extern "C" void USART_UDRE_vect(void) __attribute__((signal, used));
 extern "C" void USART_RX_vect(void) __attribute__((signal, used));
 
+using device_register = uint8_t volatile;
+
+template <typename addr, size_t offset = 0>
+struct mmio_reg
+{
+	static volatile uint8_t *reg;
+};
+
 struct usart0_traits
 {
-	static constexpr volatile uint8_t UCSRA0{0xC0};
-	static constexpr volatile uint8_t UCSRB0{0xC1};
-	static constexpr volatile uint8_t UCSRC0{0xC2};
-	static constexpr volatile uint8_t UBRRH0{0xC4};
-	static constexpr volatile uint8_t UBRRL0{0xC5};
-	static constexpr volatile uint8_t UDR00{0xC6};
+	static constexpr device_register UCSRA0{0xC0};
+	static constexpr device_register UCSRB0{0xC1};
+	static constexpr device_register UCSRC0{0xC2};
+	static constexpr device_register UBRRH0{0xC5};
+	static constexpr device_register UBRRL0{0xC4};
+	static constexpr device_register UDR00{0xC6};
 };
 
 template <typename usart0_traits>
@@ -54,7 +62,16 @@ class Usart
 {
 
 public:
-	Usart();
+	Usart() : UCSRA0{*reinterpret_cast<uint8_t *>(usart0_traits::UCSRA0)},
+			  UCSRB0{*reinterpret_cast<uint8_t *>(usart0_traits::UCSRB0)},
+			  UCSRC0{*reinterpret_cast<uint8_t *>(usart0_traits::UCSRC0)},
+			  UBRRH0{*reinterpret_cast<uint8_t *>(usart0_traits::UBRRH0)},
+			  UBRRL0{*reinterpret_cast<uint8_t *>(usart0_traits::UBRRL0)},
+			  UDR00{*reinterpret_cast<uint8_t *>(usart0_traits::UDR00)}
+	{
+		Usart<usart0_traits>::_usart = this;
+	}
+
 	~Usart() = default;
 
 	Usart(Usart &) = delete;
@@ -62,21 +79,53 @@ public:
 	Usart(Usart &&) = delete;
 	Usart &operator=(Usart &&) = delete;
 
-	void PutByte(uint8_t byte);
-	uint8_t GetByte();
+	void Init()
+	{
+		// set the baud-rate according to table 60 in datasheet
+		// 12 = 76.8k @ 16.000 MHz
+		// UBRRH0 = 0;
+		UBRRL0 = 51;
 
-	void Init();
+		// frame format: 8N1
+		UCSRC0 = _BV(UCSZ1) | _BV(UCSZ0);
+		// enable receiver/transmitter - interrupt driven
+		UCSRB0 = _BV(RXCIE) | _BV(RXEN) | _BV(TXEN);
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// write len bytes from buf to USART
-	void Write(uint8_t *buf, uint8_t len);
+	void Write(uint8_t *buf, uint8_t len)
+	{
+		for (uint8_t i = 0; i < len; i++)
+		{
+			_txBuf.PutByte(buf[i]);
+		}
 
-	uint8_t Available();
+		UCSRB0 |= _BV(UDRIE);
+	}
+
+	uint8_t Available()
+	{
+		return _rxBuf.Available();
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read at max buflen bytes from USART to buf
 	// returns number of bytes read or -1 on error
-	uint8_t Read(uint8_t *buf, uint8_t buflen);
+	uint8_t Read(uint8_t *buf, uint8_t buflen)
+	{
+		uint8_t avail = Available();
+
+		if (avail > buflen)
+			avail = buflen;
+
+		for (uint8_t i = 0; i < avail; i++)
+		{
+			buf[i] = _rxBuf.GetByte();
+		}
+
+		return avail;
+	}
 
 	friend void USART_UDRE_vect();
 	friend void USART_RX_vect();
